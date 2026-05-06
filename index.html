@@ -571,32 +571,42 @@ function copyReport() {
   alert("Report copied!");
 }
 
-function saveRecord() {
+async function saveRecord() {
+
   let s = calculateSummary();
 
-  let record = {
+  let payload = {
     date: eventData.date,
     eventName: eventData.eventName,
     eventType: eventData.eventType,
     location: eventData.location,
     staff: eventData.staff,
+    openingCash: eventData.openingCash,
+    cashSales: eventData.cashSales,
+    qrSales: eventData.qrSales,
+    expenses: eventData.expenses,
+    closingCash: eventData.closingCash,
     totalSold: s.totalSold,
     totalSales: s.totalSales,
-    paymentTotal: s.paymentTotal,
-    shortSurplus: s.shortSurplus,
-    data: eventData,
-    savedAt: new Date().toLocaleString()
+    shortSurplus: s.shortSurplus
   };
 
-  let records = JSON.parse(localStorage.getItem("eventRecords")) || [];
-  records.push(record);
-  localStorage.setItem("eventRecords", JSON.stringify(records));
+  try {
+    await fetch("https://script.google.com/macros/s/AKfycbwJnWzuAQqw44aq_-tL3GfLb2uXPOojaC2Ba2dfxiZWdqwYwkSHKirAzTy1qNBku5YG/exec", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
 
-  if (navigator.vibrate) {
-    navigator.vibrate([100, 50, 100]);
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 50, 100]);
+    }
+
+    alert("✅ Record Saved to Google Sheet!");
+
+  } catch(err) {
+    alert("❌ Failed to save.");
+    console.log(err);
   }
-
-  alert("Record saved!");
 }
 
 showPage1();
