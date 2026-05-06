@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Mixue Packing System V2</title>
+  <title>Mixue Packing System V5</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -34,6 +34,7 @@
 
     .container {
       padding: 18px;
+      padding-bottom: 240px !important;
       max-width: 680px;
       margin: auto;
     }
@@ -82,6 +83,8 @@
       font-weight: bold;
       cursor: pointer;
       margin-top: 12px;
+      position: relative;
+      z-index: 10001;
     }
 
     .btn-primary {
@@ -137,37 +140,34 @@
       margin-bottom: 14px;
     }
 
-    textarea {
-      width: 100%;
-      height: 380px;
-      border-radius: 14px;
-      border: 1px solid #ddd;
+    .action-buttons {
+      position: sticky;
+      bottom: 20px;
+      z-index: 9999;
+      background: white;
       padding: 14px;
-      font-size: 14px;
+      border-radius: 18px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+      margin-top: 20px;
     }
 
-    .action-buttons{
-  position:sticky;
-  bottom:20px;
-  z-index:9999;
-  background:white;
-  padding:14px;
-  border-radius:18px;
-  box-shadow:0 -4px 20px rgba(0,0,0,0.15);
-  margin-top:20px;
-}
-
-.container{
-  padding-bottom:220px !important;
-}
-    
+    #statusMsg {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff4f4;
+      color: #d60000;
+      font-weight: bold;
+      display: none;
+      text-align: center;
+    }
   </style>
 </head>
 
 <body>
 
 <div class="header">
-  <h1>Mixue Packing System V2</h1>
+  <h1>Mixue Packing System V5</h1>
   <p>Multiple Box • Checked By • Google Sheet</p>
 </div>
 
@@ -206,11 +206,11 @@ let boxes = [
   {
     boxNo: "Box 1",
     boxType: "L Cup Box",
-    items: [
-      { product: "Lemonade", qty: 0 }
-    ]
+    items: [{ product: "Lemonade", qty: 0 }]
   }
 ];
+
+let savedPackingInfo = {};
 
 function showForm() {
   document.getElementById("app").innerHTML = `
@@ -246,8 +246,8 @@ function showForm() {
 
       <div id="boxesArea"></div>
 
-      <button class="btn-secondary" onclick="addBox()">+ Add Box</button>
-      <button class="btn-primary" onclick="generateAllLabels()">Generate All Labels</button>
+      <button type="button" class="btn-secondary" onclick="addBox()">+ Add Box</button>
+      <button type="button" class="btn-primary" onclick="generateAllLabels()">Generate All Labels</button>
     </div>
   `;
 
@@ -256,7 +256,7 @@ function showForm() {
 }
 
 function toggleOtherLocation() {
-  let value = document.getElementById("locationSelect").value;
+  const value = document.getElementById("locationSelect").value;
   document.getElementById("otherLocationBox").style.display =
     value === "Other Location" ? "block" : "none";
 }
@@ -288,8 +288,8 @@ function renderBoxes() {
           ${renderItems(boxIndex)}
         </div>
 
-        <button class="btn-secondary" onclick="addItem(${boxIndex})">+ Add Item</button>
-        <button class="btn-grey" onclick="removeBox(${boxIndex})">Remove This Box</button>
+        <button type="button" class="btn-secondary" onclick="addItem(${boxIndex})">+ Add Item</button>
+        <button type="button" class="btn-grey" onclick="removeBox(${boxIndex})">Remove This Box</button>
       </div>
     `;
   });
@@ -332,7 +332,7 @@ function renderItems(boxIndex) {
         <input type="number" value="${item.qty}" min="0"
           onchange="boxes[${boxIndex}].items[${itemIndex}].qty=Number(this.value || 0)">
 
-        <button class="btn-secondary" onclick="removeItem(${boxIndex}, ${itemIndex})">Remove Item</button>
+        <button type="button" class="btn-secondary" onclick="removeItem(${boxIndex}, ${itemIndex})">Remove Item</button>
       </div>
     `;
   });
@@ -344,9 +344,7 @@ function addBox() {
   boxes.push({
     boxNo: "Box " + (boxes.length + 1),
     boxType: "Mixed Box",
-    items: [
-      { product: "Lemonade", qty: 0 }
-    ]
+    items: [{ product: "Lemonade", qty: 0 }]
   });
 
   renderBoxes();
@@ -382,10 +380,10 @@ function removeItem(boxIndex, itemIndex) {
 }
 
 function getLocation() {
-  let selected = document.getElementById("locationSelect").value;
+  const selected = document.getElementById("locationSelect").value;
 
   if (selected === "Other Location") {
-    return document.getElementById("otherLocation").value;
+    return document.getElementById("otherLocation").value.trim();
   }
 
   return selected;
@@ -396,9 +394,9 @@ function getTotalQty(box) {
 }
 
 function validateData() {
-  let eventName = document.getElementById("eventName").value;
-  let checkedBy = document.getElementById("checkedBy").value;
-  let location = getLocation();
+  const eventName = document.getElementById("eventName").value.trim();
+  const checkedBy = document.getElementById("checkedBy").value.trim();
+  const location = getLocation();
 
   if (!eventName || !checkedBy || !location) {
     alert("Please fill Event Name, Location and Checked By.");
@@ -416,10 +414,10 @@ function validateData() {
 }
 
 function generateLabelText() {
-  let date = document.getElementById("date").value;
-  let eventName = document.getElementById("eventName").value;
-  let location = getLocation();
-  let checkedBy = document.getElementById("checkedBy").value;
+  const date = savedPackingInfo.date || document.getElementById("date").value;
+  const eventName = savedPackingInfo.eventName || document.getElementById("eventName").value;
+  const location = savedPackingInfo.location || getLocation();
+  const checkedBy = savedPackingInfo.checkedBy || document.getElementById("checkedBy").value;
 
   let text = `Packing Report\n`;
   text += `Date: ${date}\n`;
@@ -437,73 +435,110 @@ function generateLabelText() {
         text += `${itemIndex + 1}. ${item.product} (${item.qty})\n`;
       });
 
-    if (boxIndex !== boxes.length - 1) {
-      text += `\n`;
-    }
+    if (boxIndex !== boxes.length - 1) text += `\n`;
   });
 
   return text;
 }
-
-let savedPackingInfo = {};
 
 function generateAllLabels() {
   if (!validateData()) return;
 
   savedPackingInfo = {
     date: document.getElementById("date").value,
-    eventName: document.getElementById("eventName").value,
+    eventName: document.getElementById("eventName").value.trim(),
     location: getLocation(),
-    checkedBy: document.getElementById("checkedBy").value
+    checkedBy: document.getElementById("checkedBy").value.trim()
   };
 
-  let label = generateLabelText();
+  const label = generateLabelText();
 
   document.getElementById("app").innerHTML = `
     <div class="box">
       <h2>Box Label Preview</h2>
 
-      <div class="label-preview">
-        ${label.replace(/\n/g, "<br>")}
-      </div>
+      <div class="label-preview">${label}</div>
 
       <div class="action-buttons">
-        <button type="button" class="btn-green" onclick="saveAllBoxes()">
+        <button type="button" id="saveBtn" class="btn-green">
           Save All Boxes to Google Sheet
         </button>
 
-        <button type="button" class="btn-primary" onclick="copyLabel()">
+        <button type="button" id="copyBtn" class="btn-primary">
           Copy Packing Report
         </button>
 
-        <button type="button" class="btn-secondary" onclick="showForm()">
+        <button type="button" id="backBtn" class="btn-secondary">
           Back / Edit
         </button>
+
+        <div id="statusMsg"></div>
       </div>
     </div>
   `;
+
+  document.getElementById("saveBtn").addEventListener("click", saveAllBoxes);
+  document.getElementById("copyBtn").addEventListener("click", copyLabel);
+  document.getElementById("backBtn").addEventListener("click", showForm);
+}
+
+function showStatus(message) {
+  const status = document.getElementById("statusMsg");
+  if (!status) return;
+
+  status.style.display = "block";
+  status.innerHTML = message;
 }
 
 function copyLabel() {
-  let label = generateLabelText();
+  const label = generateLabelText();
 
-  navigator.clipboard.writeText(label).then(() => {
-    if (navigator.vibrate) {
-      navigator.vibrate([80, 40, 80]);
+  const fallbackCopy = () => {
+    const textarea = document.createElement("textarea");
+    textarea.value = label;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  };
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(label).then(() => {
+        showStatus("✅ Packing Report copied!");
+        alert("✅ Packing Report copied!");
+      }).catch(() => {
+        fallbackCopy();
+        showStatus("✅ Packing Report copied!");
+        alert("✅ Packing Report copied!");
+      });
+    } else {
+      fallbackCopy();
+      showStatus("✅ Packing Report copied!");
+      alert("✅ Packing Report copied!");
     }
+  } catch (err) {
+    fallbackCopy();
+    showStatus("✅ Packing Report copied!");
     alert("✅ Packing Report copied!");
-  });
+  }
 }
 
 async function saveAllBoxes() {
-  let date = savedPackingInfo.date;
-  let eventName = savedPackingInfo.eventName;
-  let location = savedPackingInfo.location;
-  let checkedBy = savedPackingInfo.checkedBy;
+  const saveBtn = document.getElementById("saveBtn");
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = "Saving... Please wait";
+
+  showStatus("⏳ Saving to Google Sheet...");
+
+  const date = savedPackingInfo.date;
+  const eventName = savedPackingInfo.eventName;
+  const location = savedPackingInfo.location;
+  const checkedBy = savedPackingInfo.checkedBy;
 
   try {
     for (let box of boxes) {
-      let payload = {
+      const payload = {
         type: "packing",
         date: date,
         eventName: eventName,
@@ -518,15 +553,24 @@ async function saveAllBoxes() {
       await fetch(WEB_APP_URL, {
         method: "POST",
         mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
         body: JSON.stringify(payload)
       });
     }
 
+    showStatus("✅ All boxes saved to Google Sheet!");
     alert("✅ All boxes saved to Google Sheet!");
 
   } catch (err) {
-    alert("❌ Failed to save.");
     console.log(err);
+    showStatus("❌ Failed to save. Please check internet or Google Script.");
+    alert("❌ Failed to save. Please check internet or Google Script.");
+
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = "Save All Boxes to Google Sheet";
   }
 }
 
