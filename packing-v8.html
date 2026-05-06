@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mixue Packing System V8 Final</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      margin: 0;
+      color: #222;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #d60000, #ff3b3b);
+      color: white;
+      padding: 22px 18px;
+      border-radius: 0 0 24px 24px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      opacity: 0.9;
+    }
+
+    .container {
+      padding: 18px;
+      padding-bottom: 260px !important;
+      max-width: 760px;
+      margin: auto;
+    }
+
+    .box {
+      background: white;
+      padding: 18px;
+      border-radius: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h2, h3 {
+      margin-top: 0;
+      color: #d60000;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      background: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .dash-card {
+      background: white;
+      padding: 16px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .dash-card h3 {
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #555;
+    }
+
+    .dash-card p {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+      color: #d60000;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+      position: relative;
+      z-index: 10001;
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #d60000;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #d60000;
+      border: 1px solid #d60000;
+    }
+
+    .btn-green {
+      background: #118c37;
+      color: white;
+    }
+
+    .btn-blue {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-grey {
+      background: #e5e5e5;
+      color: #333;
+    }
+
+    .item-row {
+      background: #fafafa;
+      padding: 12px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      border: 1px solid #eee;
+    }
+
+    .box-card {
+      border: 2px solid #f0d0d0;
+      background: #fff;
+      padding: 16px;
+      border-radius: 18px;
+      margin-bottom: 18px;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .label-preview, .hq-preview {
+      background: #fff;
+      border: 2px dashed #d60000;
+      padding: 18px;
+      border-radius: 18px;
+      white-space: pre-line;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .hq-preview {
+      border-color: #2563eb;
+    }
+
+    .warning {
+      background: #ffe6e6;
+      color: #d60000;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 12px;
+      line-height: 1.45;
+    }
+
+    .ok {
+      background: #e9f8ee;
+      color: #118c37;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    .action-buttons {
+      position: sticky;
+      bottom: 20px;
+      z-index: 9999;
+      background: white;
+      padding: 14px;
+      border-radius: 18px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+      margin-top: 20px;
+    }
+
+    #statusMsg {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff4f4;
+      color: #d60000;
+      font-weight: bold;
+      display: none;
+      text-align: center;
+    }
+
+    @media (max-width: 520px) {
+      .grid, .dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>Mixue Packing System V8 Final</h1>
+  <p>V5 Save System + Smart Capacity + HQ Format + Dashboard</p>
+</div>
+
+<div class="container">
+  <div id="app"></div>
+</div>
+
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwJnWzuAQqw44aq_-tL3GfLb2uXPOojaC2Ba2dfxiZWdqwYwkSHKirAzTy1qNBku5YG/exec";
+
+const products = [
+  "Lemonade",
+  "Lemon Jasmine Tea",
+  "Lemon Black Tea",
+  "Kiwi Jasmine Tea",
+  "Fresh Orange",
+  "Strawberry Bobo",
+  "Strawberry Peach",
+  "Peach Jasmine Tea",
+  "Milk Tea L",
+  "Milk Tea M",
+  "Taro Grape",
+  "Toffee Hazelnut Latte",
+  "Ice Cream Toffee Hazelnut Latte",
+  "Kiwi Creamy Drink",
+  "Brown Sugar Latte",
+  "Strawberry Creamy Drink",
+  "Mango Brulee",
+  "Toffee Lava Brulee",
+  "Original Sundae",
+  "Taro Sundae",
+  "Taro Ice Cream Cone"
+];
+
+let boxes = [
+  {
+    boxNo: "Box 1",
+    boxType: "L Cup Box",
+    items: [{ product: "Lemonade", qty: 0 }]
+  }
+];
+
+let savedPackingInfo = {};
+
+function showForm() {
+  document.getElementById("app").innerHTML = `
+    <div class="dashboard">
+      <div class="dash-card">
+        <h3>Total Boxes</h3>
+        <p id="dashBoxes">0</p>
+      </div>
+      <div class="dash-card">
+        <h3>Total Cups</h3>
+        <p id="dashCups">0</p>
+      </div>
+      <div class="dash-card">
+        <h3>Top Product</h3>
+        <p id="dashTop" style="font-size:16px;">-</p>
+      </div>
+      <div class="dash-card">
+        <h3>Capacity Status</h3>
+        <p id="dashStatus" style="font-size:16px;">OK</p>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>1. Packing Info</h2>
+
+      <label>Date</label>
+      <input type="date" id="date">
+
+      <label>Event Name</label>
+      <input type="text" id="eventName" placeholder="Follow event banner name">
+
+      <label>Location</label>
+      <select id="locationSelect" onchange="toggleOtherLocation()">
+        <option>UniMAP Unicity Padang Besar</option>
+        <option>UniMAP Wang Ulu</option>
+        <option>UniMAP PF 1</option>
+        <option>Politeknik Pauh</option>
+        <option>UiTM Arau</option>
+        <option>Other Location</option>
+      </select>
+
+      <div id="otherLocationBox" style="display:none;">
+        <label>Other Location</label>
+        <input type="text" id="otherLocation" placeholder="Write event location">
+      </div>
+
+      <label>Checked By</label>
+      <input type="text" id="checkedBy" placeholder="Staff name">
+
+      <h2 style="margin-top:24px;">2. Boxes</h2>
+      <p class="small">L Cup Max 39 • M Cup Max 40 • Sundae Cup Max 56</p>
+
+      <div id="boxesArea"></div>
+      <div id="capacityWarningArea"></div>
+
+      <button type="button" class="btn-secondary" onclick="addBox()">+ Add Box</button>
+      <button type="button" class="btn-primary" onclick="generateAllLabels()">Generate Preview</button>
+    </div>
+  `;
+
+  document.getElementById("date").valueAsDate = new Date();
+  renderBoxes();
+  updateDashboard();
+}
+
+function toggleOtherLocation() {
+  const value = document.getElementById("locationSelect").value;
+  document.getElementById("otherLocationBox").style.display =
+    value === "Other Location" ? "block" : "none";
+}
+
+function renderBoxes() {
+  let html = "";
+
+  boxes.forEach((box, boxIndex) => {
+    html += `
+      <div class="box-card">
+        <h3>${box.boxNo}</h3>
+
+        <div class="grid">
+          <div>
+            <label>Box No</label>
+            <input type="text" value="${box.boxNo}" oninput="boxes[${boxIndex}].boxNo=this.value; updateDashboard(); renderCapacityWarnings();">
+          </div>
+
+          <div>
+            <label>Box Type</label>
+            <select onchange="boxes[${boxIndex}].boxType=this.value; updateDashboard(); renderCapacityWarnings();">
+              ${boxTypeOptions(box.boxType)}
+            </select>
+          </div>
+        </div>
+
+        <h3 style="margin-top:18px;">Items</h3>
+        <div id="items_${boxIndex}">
+          ${renderItems(boxIndex)}
+        </div>
+
+        <button type="button" class="btn-secondary" onclick="addItem(${boxIndex})">+ Add Item</button>
+        <button type="button" class="btn-grey" onclick="removeBox(${boxIndex})">Remove This Box</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("boxesArea").innerHTML = html;
+  renderCapacityWarnings();
+  updateDashboard();
+}
+
+function boxTypeOptions(selected) {
+  const types = [
+    "L Cup Box",
+    "M Cup Box",
+    "U Cup Sundae Box",
+    "Mixed Box",
+    "Accessories Box"
+  ];
+
+  return types.map(t =>
+    `<option value="${t}" ${t === selected ? "selected" : ""}>${t}</option>`
+  ).join("");
+}
+
+function productOptions(selected) {
+  return products.map(p =>
+    `<option value="${p}" ${p === selected ? "selected" : ""}>${p}</option>`
+  ).join("");
+}
+
+function renderItems(boxIndex) {
+  let html = "";
+
+  boxes[boxIndex].items.forEach((item, itemIndex) => {
+    html += `
+      <div class="item-row">
+        <label>Product</label>
+        <select onchange="boxes[${boxIndex}].items[${itemIndex}].product=this.value; updateDashboard();">
+          ${productOptions(item.product)}
+        </select>
+
+        <label>Qty</label>
+        <input type="number" value="${item.qty}" min="0"
+          oninput="boxes[${boxIndex}].items[${itemIndex}].qty=Number(this.value || 0); updateDashboard(); renderCapacityWarnings();">
+
+        <button type="button" class="btn-secondary" onclick="removeItem(${boxIndex}, ${itemIndex})">Remove Item</button>
+      </div>
+    `;
+  });
+
+  return html;
+}
+
+function addBox() {
+  boxes.push({
+    boxNo: "Box " + (boxes.length + 1),
+    boxType: "Mixed Box",
+    items: [{ product: "Lemonade", qty: 0 }]
+  });
+
+  renderBoxes();
+}
+
+function removeBox(boxIndex) {
+  if (boxes.length === 1) {
+    alert("At least 1 box is required.");
+    return;
+  }
+
+  boxes.splice(boxIndex, 1);
+  renderBoxes();
+}
+
+function addItem(boxIndex) {
+  boxes[boxIndex].items.push({ product: "Lemonade", qty: 0 });
+  renderBoxes();
+}
+
+function removeItem(boxIndex, itemIndex) {
+  if (boxes[boxIndex].items.length === 1) {
+    alert("At least 1 item is required.");
+    return;
+  }
+
+  boxes[boxIndex].items.splice(itemIndex, 1);
+  renderBoxes();
+}
+
+function getLocation() {
+  const selected = document.getElementById("locationSelect").value;
+
+  if (selected === "Other Location") {
+    return document.getElementById("otherLocation").value.trim();
+  }
+
+  return selected;
+}
+
+function getCapacity(boxType) {
+  if (boxType === "L Cup Box") return 39;
+  if (boxType === "M Cup Box") return 40;
+  if (boxType === "U Cup Sundae Box") return 56;
+  return null;
+}
+
+function getTotalQty(box) {
+  return box.items.reduce((sum, item) => sum + Number(item.qty || 0), 0);
+}
+
+function getGrandTotalQty() {
+  return boxes.reduce((sum, box) => sum + getTotalQty(box), 0);
+}
+
+function getCapacityWarnings() {
+  let warnings = [];
+
+  boxes.forEach(box => {
+    const max = getCapacity(box.boxType);
+    const total = getTotalQty(box);
+
+    if (max && total > max) {
+      warnings.push(`${box.boxNo} exceeded ${box.boxType} limit by ${total - max} cups. Max: ${max}, Current: ${total}`);
+    }
+  });
+
+  return warnings;
+}
+
+function renderCapacityWarnings() {
+  const area = document.getElementById("capacityWarningArea");
+  if (!area) return;
+
+  const warnings = getCapacityWarnings();
+
+  if (warnings.length === 0) {
+    area.innerHTML = `<div class="ok">✅ Capacity OK. No box exceeded limit.</div>`;
+    return;
+  }
+
+  area.innerHTML = warnings.map(w => `<div class="warning">⚠ ${w}</div>`).join("");
+}
+
+function getTopProduct() {
+  const map = {};
+
+  boxes.forEach(box => {
+    box.items.forEach(item => {
+      const qty = Number(item.qty || 0);
+      if (qty > 0) {
+        map[item.product] = (map[item.product] || 0) + qty;
+      }
+    });
+  });
+
+  let topName = "-";
+  let topQty = 0;
+
+  Object.keys(map).forEach(product => {
+    if (map[product] > topQty) {
+      topName = product;
+      topQty = map[product];
+    }
+  });
+
+  return topQty > 0 ? `${topName} (${topQty})` : "-";
+}
+
+function updateDashboard() {
+  const dashBoxes = document.getElementById("dashBoxes");
+  const dashCups = document.getElementById("dashCups");
+  const dashTop = document.getElementById("dashTop");
+  const dashStatus = document.getElementById("dashStatus");
+
+  if (!dashBoxes || !dashCups || !dashTop || !dashStatus) return;
+
+  dashBoxes.innerHTML = boxes.length;
+  dashCups.innerHTML = getGrandTotalQty();
+  dashTop.innerHTML = getTopProduct();
+
+  const warnings = getCapacityWarnings();
+  dashStatus.innerHTML = warnings.length ? "Warning" : "OK";
+  dashStatus.style.color = warnings.length ? "#d60000" : "#118c37";
+}
+
+function validateData() {
+  const eventName = document.getElementById("eventName").value.trim();
+  const checkedBy = document.getElementById("checkedBy").value.trim();
+  const location = getLocation();
+
+  if (!eventName || !checkedBy || !location) {
+    alert("Please fill Event Name, Location and Checked By.");
+    return false;
+  }
+
+  for (let box of boxes) {
+    if (!box.boxNo || getTotalQty(box) <= 0) {
+      alert("Every box must have Box No and at least 1 item quantity.");
+      return false;
+    }
+  }
+
+  const warnings = getCapacityWarnings();
+  if (warnings.length > 0) {
+    const confirmContinue = confirm("Some boxes exceeded capacity. Continue anyway?");
+    if (!confirmContinue) return false;
+  }
+
+  return true;
+}
+
+function generateLabelText() {
+  const date = savedPackingInfo.date || document.getElementById("date").value;
+  const eventName = savedPackingInfo.eventName || document.getElementById("eventName").value;
+  const location = savedPackingInfo.location || getLocation();
+  const checkedBy = savedPackingInfo.checkedBy || document.getElementById("checkedBy").value;
+
+  let text = `Packing Report
+`;
+  text += `Date: ${date}
+`;
+  text += `Event: ${eventName}
+`;
+  text += `Location: ${location}
+`;
+  text += `Checked By: ${checkedBy}
+`;
+  text += `Total Boxes: ${boxes.length}
+`;
+  text += `Total Cups: ${getGrandTotalQty()}
+
+`;
+
+  boxes.forEach((box, boxIndex) => {
+    const max = getCapacity(box.boxType);
+    const total = getTotalQty(box);
+
+    text += `${box.boxNo} / ${box.boxType}
+`;
+    text += `Total Qty: ${total}`;
+    if (max) text += ` / Max ${max}`;
+    text += `
+`;
+
+    box.items
+      .filter(item => Number(item.qty) > 0)
+      .forEach((item, itemIndex) => {
+        text += `${itemIndex + 1}. ${item.product} (${item.qty})
+`;
+      });
+
+    if (boxIndex !== boxes.length - 1) text += `
+`;
+  });
+
+  return text;
+}
+
+function generateHQFormatText() {
+  const eventName = savedPackingInfo.eventName || document.getElementById("eventName").value;
+  const date = savedPackingInfo.date || document.getElementById("date").value;
+  const location = savedPackingInfo.location || getLocation();
+
+  let text = `Order for ${eventName} (${date})
+`;
+  text += `Location: ${location}
+
+`;
+
+  boxes.forEach(box => {
+    text += `1 Kotak Besar - ${box.boxNo} (${box.boxType})
+`;
+
+    box.items
+      .filter(item => Number(item.qty) > 0)
+      .forEach((item, index) => {
+        text += `${index + 1}. ${item.product} (${item.qty})
+`;
+      });
+
+    text += `
+`;
+  });
+
+  text += `Total Boxes: ${boxes.length}
+`;
+  text += `Total Cups: ${getGrandTotalQty()}
+`;
+
+  return text;
+}
+
+function generateAllLabels() {
+  if (!validateData()) return;
+
+  savedPackingInfo = {
+    date: document.getElementById("date").value,
+    eventName: document.getElementById("eventName").value.trim(),
+    location: getLocation(),
+    checkedBy: document.getElementById("checkedBy").value.trim()
+  };
+
+  const label = generateLabelText();
+  const hq = generateHQFormatText();
+  const warnings = getCapacityWarnings();
+
+  document.getElementById("app").innerHTML = `
+    <div class="dashboard">
+      <div class="dash-card">
+        <h3>Total Boxes</h3>
+        <p>${boxes.length}</p>
+      </div>
+      <div class="dash-card">
+        <h3>Total Cups</h3>
+        <p>${getGrandTotalQty()}</p>
+      </div>
+      <div class="dash-card">
+        <h3>Top Product</h3>
+        <p style="font-size:16px;">${getTopProduct()}</p>
+      </div>
+      <div class="dash-card">
+        <h3>Capacity Status</h3>
+        <p style="font-size:16px; color:${warnings.length ? "#d60000" : "#118c37"};">${warnings.length ? "Warning" : "OK"}</p>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>Box Label Preview</h2>
+      ${warnings.length ? warnings.map(w => `<div class="warning">⚠ ${w}</div>`).join("") : `<div class="ok">✅ Capacity OK. No box exceeded limit.</div>`}
+
+      <h3>Packing Report</h3>
+      <div class="label-preview">${label}</div>
+
+      <h3>HQ WhatsApp Format</h3>
+      <div class="hq-preview">${hq}</div>
+
+      <div class="action-buttons">
+        <button type="button" id="saveBtn" class="btn-green">Save All Boxes to Google Sheet</button>
+        <button type="button" id="copyPackingBtn" class="btn-primary">Copy Packing Report</button>
+        <button type="button" id="copyHQBtn" class="btn-blue">Copy HQ Format</button>
+        <button type="button" id="backBtn" class="btn-secondary">Back / Edit</button>
+        <div id="statusMsg"></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("saveBtn").addEventListener("click", saveAllBoxes);
+  document.getElementById("copyPackingBtn").addEventListener("click", copyPackingReport);
+  document.getElementById("copyHQBtn").addEventListener("click", copyHQFormat);
+  document.getElementById("backBtn").addEventListener("click", showForm);
+}
+
+function showStatus(message) {
+  const status = document.getElementById("statusMsg");
+  if (!status) return;
+
+  status.style.display = "block";
+  status.innerHTML = message;
+}
+
+function copyText(text, successMessage) {
+  const fallbackCopy = () => {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  };
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        showStatus(successMessage);
+        alert(successMessage);
+      }).catch(() => {
+        fallbackCopy();
+        showStatus(successMessage);
+        alert(successMessage);
+      });
+    } else {
+      fallbackCopy();
+      showStatus(successMessage);
+      alert(successMessage);
+    }
+  } catch (err) {
+    fallbackCopy();
+    showStatus(successMessage);
+    alert(successMessage);
+  }
+}
+
+function copyPackingReport() {
+  copyText(generateLabelText(), "✅ Packing Report copied!");
+}
+
+function copyHQFormat() {
+  copyText(generateHQFormatText(), "✅ HQ WhatsApp Format copied!");
+}
+
+async function saveAllBoxes() {
+  const saveBtn = document.getElementById("saveBtn");
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = "Saving... Please wait";
+
+  showStatus("⏳ Saving to Google Sheet...");
+
+  const date = savedPackingInfo.date;
+  const eventName = savedPackingInfo.eventName;
+  const location = savedPackingInfo.location;
+  const checkedBy = savedPackingInfo.checkedBy;
+
+  try {
+    for (let box of boxes) {
+      const max = getCapacity(box.boxType);
+      const payload = {
+        type: "packing",
+        version: "V8 Final",
+        date: date,
+        eventName: eventName,
+        location: location,
+        boxNo: box.boxNo,
+        boxType: box.boxType,
+        packedBy: checkedBy,
+        totalQty: getTotalQty(box),
+        capacityMax: max || "N/A",
+        capacityStatus: max && getTotalQty(box) > max ? "Exceeded" : "OK",
+        grandTotalQty: getGrandTotalQty(),
+        totalBoxes: boxes.length,
+        topProduct: getTopProduct(),
+        items: box.items.filter(item => Number(item.qty) > 0)
+      };
+
+      await fetch(WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(payload)
+      });
+    }
+
+    showStatus("✅ All boxes saved to Google Sheet!");
+    alert("✅ All boxes saved to Google Sheet!");
+
+  } catch (err) {
+    console.log(err);
+    showStatus("❌ Failed to save. Please check internet or Google Script.");
+    alert("❌ Failed to save. Please check internet or Google Script.");
+
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = "Save All Boxes to Google Sheet";
+  }
+}
+
+showForm();
+</script>
+
+</body>
+</html>
