@@ -445,8 +445,17 @@ function generateLabelText() {
   return text;
 }
 
+let savedPackingInfo = {};
+
 function generateAllLabels() {
   if (!validateData()) return;
+
+  savedPackingInfo = {
+    date: document.getElementById("date").value,
+    eventName: document.getElementById("eventName").value,
+    location: getLocation(),
+    checkedBy: document.getElementById("checkedBy").value
+  };
 
   let label = generateLabelText();
 
@@ -459,66 +468,17 @@ function generateAllLabels() {
       </div>
 
       <div class="action-buttons">
-
-        <button
-          type="button"
-          class="btn-green"
-          onclick="saveAllBoxes()"
-          ontouchstart="saveAllBoxes()"
-          style="
-            width:100%;
-            padding:16px;
-            border:none;
-            border-radius:16px;
-            background:#118c37;
-            color:white;
-            font-size:18px;
-            font-weight:bold;
-            margin-bottom:12px;
-            cursor:pointer;
-          ">
+        <button type="button" class="btn-green" onclick="saveAllBoxes()">
           Save All Boxes to Google Sheet
         </button>
 
-        <button
-          type="button"
-          class="btn-primary"
-          onclick="copyLabel()"
-          ontouchstart="copyLabel()"
-          style="
-            width:100%;
-            padding:16px;
-            border:none;
-            border-radius:16px;
-            background:#d60000;
-            color:white;
-            font-size:18px;
-            font-weight:bold;
-            margin-bottom:12px;
-            cursor:pointer;
-          ">
+        <button type="button" class="btn-primary" onclick="copyLabel()">
           Copy Packing Report
         </button>
 
-        <button
-          type="button"
-          class="btn-secondary"
-          onclick="showForm()"
-          ontouchstart="showForm()"
-          style="
-            width:100%;
-            padding:16px;
-            border:2px solid #d60000;
-            border-radius:16px;
-            background:white;
-            color:#d60000;
-            font-size:18px;
-            font-weight:bold;
-            cursor:pointer;
-          ">
+        <button type="button" class="btn-secondary" onclick="showForm()">
           Back / Edit
         </button>
-
       </div>
     </div>
   `;
@@ -536,10 +496,10 @@ function copyLabel() {
 }
 
 async function saveAllBoxes() {
-  let date = document.getElementById("date").value;
-  let eventName = document.getElementById("eventName").value;
-  let location = getLocation();
-  let checkedBy = document.getElementById("checkedBy").value;
+  let date = savedPackingInfo.date;
+  let eventName = savedPackingInfo.eventName;
+  let location = savedPackingInfo.location;
+  let checkedBy = savedPackingInfo.checkedBy;
 
   try {
     for (let box of boxes) {
@@ -560,10 +520,6 @@ async function saveAllBoxes() {
         mode: "no-cors",
         body: JSON.stringify(payload)
       });
-    }
-
-    if (navigator.vibrate) {
-      navigator.vibrate([100, 50, 100]);
     }
 
     alert("✅ All boxes saved to Google Sheet!");
