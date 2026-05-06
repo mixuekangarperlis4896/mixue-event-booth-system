@@ -145,6 +145,22 @@
       padding: 14px;
       font-size: 14px;
     }
+
+    .action-buttons{
+  position:sticky;
+  bottom:20px;
+  z-index:9999;
+  background:white;
+  padding:14px;
+  border-radius:18px;
+  box-shadow:0 -4px 20px rgba(0,0,0,0.15);
+  margin-top:20px;
+}
+
+.container{
+  padding-bottom:220px !important;
+}
+    
   </style>
 </head>
 
@@ -434,7 +450,7 @@ function generateAllLabels() {
 
   let label = generateLabelText();
 
- document.getElementById("app").innerHTML = `
+  document.getElementById("app").innerHTML = `
     <div class="box">
       <h2>Box Label Preview</h2>
 
@@ -442,17 +458,68 @@ function generateAllLabels() {
         ${label.replace(/\n/g, "<br>")}
       </div>
 
-      <button class="btn-green" onclick="saveAllBoxes()">
-        Save All Boxes to Google Sheet
-      </button>
+      <div class="action-buttons">
 
-      <button class="btn-primary" onclick="copyLabel()">
-        Copy Packing Report
-      </button>
+        <button
+          type="button"
+          class="btn-green"
+          onclick="saveAllBoxes()"
+          ontouchstart="saveAllBoxes()"
+          style="
+            width:100%;
+            padding:16px;
+            border:none;
+            border-radius:16px;
+            background:#118c37;
+            color:white;
+            font-size:18px;
+            font-weight:bold;
+            margin-bottom:12px;
+            cursor:pointer;
+          ">
+          Save All Boxes to Google Sheet
+        </button>
 
-      <button class="btn-secondary" onclick="showForm()">
-        Back / Edit
-      </button>
+        <button
+          type="button"
+          class="btn-primary"
+          onclick="copyLabel()"
+          ontouchstart="copyLabel()"
+          style="
+            width:100%;
+            padding:16px;
+            border:none;
+            border-radius:16px;
+            background:#d60000;
+            color:white;
+            font-size:18px;
+            font-weight:bold;
+            margin-bottom:12px;
+            cursor:pointer;
+          ">
+          Copy Packing Report
+        </button>
+
+        <button
+          type="button"
+          class="btn-secondary"
+          onclick="showForm()"
+          ontouchstart="showForm()"
+          style="
+            width:100%;
+            padding:16px;
+            border:2px solid #d60000;
+            border-radius:16px;
+            background:white;
+            color:#d60000;
+            font-size:18px;
+            font-weight:bold;
+            cursor:pointer;
+          ">
+          Back / Edit
+        </button>
+
+      </div>
     </div>
   `;
 }
