@@ -575,6 +575,19 @@ async function saveRecord() {
 
   let s = calculateSummary();
 
+  let itemsForSheet = eventData.items
+    .filter(item => item.stockOut > 0)
+    .map(item => ({
+      name: item.name,
+      stockOut: item.stockOut,
+      balance: item.balance,
+      damage: item.damage,
+      sold: item.sold,
+      price: item.price,
+      sales: item.sales,
+      reason: item.reason
+    }));
+
   let payload = {
     date: eventData.date,
     eventName: eventData.eventName,
@@ -588,22 +601,26 @@ async function saveRecord() {
     closingCash: eventData.closingCash,
     totalSold: s.totalSold,
     totalSales: s.totalSales,
-    shortSurplus: s.shortSurplus
+    shortSurplus: s.shortSurplus,
+    items: itemsForSheet
   };
 
   try {
+
     await fetch("https://script.google.com/macros/s/AKfycbwJnWzuAQqw44aq_-tL3GfLb2uXPOojaC2Ba2dfxiZWdqwYwkSHKirAzTy1qNBku5YG/exec", {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
+  method: "POST",
+  mode: "no-cors",
+  body: JSON.stringify(payload)
+});
 
     if (navigator.vibrate) {
       navigator.vibrate([100, 50, 100]);
     }
 
-    alert("✅ Record Saved to Google Sheet!");
+    alert("✅ Summary + Stock Detail saved!");
 
   } catch(err) {
+
     alert("❌ Failed to save.");
     console.log(err);
   }
