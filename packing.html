@@ -1,1 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mixue Packing System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      margin: 0;
+      color: #222;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #d60000, #ff3b3b);
+      color: white;
+      padding: 22px 18px;
+      border-radius: 0 0 24px 24px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      opacity: 0.9;
+    }
+
+    .container {
+      padding: 18px;
+      max-width: 620px;
+      margin: auto;
+    }
+
+    .box {
+      background: white;
+      padding: 18px;
+      border-radius: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #d60000;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .btn-primary {
+      background: #d60000;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #d60000;
+      border: 1px solid #d60000;
+    }
+
+    .btn-green {
+      background: #118c37;
+      color: white;
+    }
+
+    .item-row {
+      background: #fafafa;
+      padding: 12px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      border: 1px solid #eee;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #777;
+    }
+
+    textarea {
+      width: 100%;
+      height: 320px;
+      border-radius: 14px;
+      border: 1px solid #ddd;
+      padding: 14px;
+      font-size: 14px;
+    }
+
+    .label-preview {
+      background: #fff;
+      border: 2px dashed #d60000;
+      padding: 18px;
+      border-radius: 18px;
+      white-space: pre-wrap;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>Mixue Packing System</h1>
+  <p>Box Label • Packing Verification • Google Sheet</p>
+</div>
+
+<div class="container">
+  <div id="app"></div>
+</div>
+
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwJnWzuAQqw44aq_-tL3GfLb2uXPOojaC2Ba2dfxiZWdqwYwkSHKirAzTy1qNBku5YG/exec";
+
+const products = [
+  "Lemonade",
+  "Lemon Jasmine Tea",
+  "Lemon Black Tea",
+  "Kiwi Jasmine Tea",
+  "Fresh Orange",
+  "Strawberry Bobo",
+  "Strawberry Peach",
+  "Peach Jasmine Tea",
+  "Milk Tea L",
+  "Milk Tea M",
+  "Taro Grape",
+  "Toffee Hazelnut Latte",
+  "Ice Cream Toffee Hazelnut Latte",
+  "Kiwi Creamy Drink",
+  "Brown Sugar Latte",
+  "Strawberry Creamy Drink",
+  "Mango Brulee",
+  "Toffee Lava Brulee",
+  "Original Sundae",
+  "Taro Sundae",
+  "Taro Ice Cream Cone"
+];
+
+let packingData = {
+  date: "",
+  eventName: "",
+  location: "",
+  boxNo: "",
+  boxType: "",
+  packedBy: "",
+  items: []
+};
+
+function showForm() {
+  let productOptions = products.map(p => `<option value="${p}">${p}</option>`).join("");
+
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>1. Packing Info</h2>
+
+      <label>Date</label>
+      <input type="date" id="date">
+
+      <label>Event Name</label>
+      <input type="text" id="eventName" placeholder="Example: Unicity / Politeknik">
+
+      <label>Location</label>
+      <input type="text" id="location" placeholder="Example: Kangar / TPU / Stadium">
+
+      <div class="grid">
+        <div>
+          <label>Box No</label>
+          <input type="text" id="boxNo" placeholder="Example: Box 1">
+        </div>
+
+        <div>
+          <label>Box Type</label>
+          <select id="boxType">
+            <option>L Cup Box</option>
+            <option>M Cup Box</option>
+            <option>U Cup Sundae Box</option>
+            <option>Mixed Box</option>
+            <option>Accessories Box</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Packed By</label>
+      <input type="text" id="packedBy" placeholder="Example: Staff A + Staff B">
+
+      <h2 style="margin-top:22px;">2. Box Items</h2>
+      <p class="small">Fill product and quantity inside this box.</p>
+
+      <div id="itemsArea"></div>
+
+      <button class="btn-secondary" onclick="addItem()">+ Add Item</button>
+      <button class="btn-primary" onclick="generateLabel()">Generate Label</button>
+    </div>
+  `;
+
+  document.getElementById("date").valueAsDate = new Date();
+  addItem();
+}
+
+function addItem(product = "", qty = 0) {
+  let productOptions = products.map(p => `<option value="${p}" ${p === product ? "selected" : ""}>${p}</option>`).join("");
+  let id = Date.now() + Math.floor(Math.random() * 999);
+
+  let html = `
+    <div class="item-row" id="row_${id}">
+      <label>Product</label>
+      <select class="productInput">${productOptions}</select>
+
+      <label>Qty</label>
+      <input type="number" class="qtyInput" value="${qty}" min="0">
+
+      <button class="btn-secondary" onclick="removeItem('row_${id}')">Remove</button>
+    </div>
+  `;
+
+  document.getElementById("itemsArea").insertAdjacentHTML("beforeend", html);
+}
+
+function removeItem(id) {
+  document.getElementById(id).remove();
+}
+
+function collectData() {
+  packingData.date = document.getElementById("date").value;
+  packingData.eventName = document.getElementById("eventName").value;
+  packingData.location = document.getElementById("location").value;
+  packingData.boxNo = document.getElementById("boxNo").value;
+  packingData.boxType = document.getElementById("boxType").value;
+  packingData.packedBy = document.getElementById("packedBy").value;
+
+  let productInputs = document.querySelectorAll(".productInput");
+  let qtyInputs = document.querySelectorAll(".qtyInput");
+
+  packingData.items = [];
+
+  for (let i = 0; i < productInputs.length; i++) {
+    let product = productInputs[i].value;
+    let qty = Number(qtyInputs[i].value || 0);
+
+    if (qty > 0) {
+      packingData.items.push({ product, qty });
+    }
+  }
+}
+
+function getTotalQty() {
+  return packingData.items.reduce((sum, item) => sum + item.qty, 0);
+}
+
+function generateLabelText() {
+  let text = `${packingData.boxNo || "Box"} / ${packingData.boxType}\n`;
+  text += `Event: ${packingData.eventName}\n`;
+  text += `Location: ${packingData.location}\n`;
+  text += `Packed By: ${packingData.packedBy}\n`;
+  text += `Total Qty: ${getTotalQty()}\n\n`;
+
+  packingData.items.forEach((item, index) => {
+    text += `${index + 1}. ${item.product} (${item.qty})\n`;
+  });
+
+  return text;
+}
+
+function generateLabel() {
+  collectData();
+
+  if (!packingData.eventName || !packingData.boxNo || packingData.items.length === 0) {
+    alert("Please fill Event Name, Box No and at least 1 item.");
+    return;
+  }
+
+  let label = generateLabelText();
+
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>Box Label Preview</h2>
+
+      <div class="label-preview">${label}</div>
+
+      <button class="btn-green" onclick="savePacking()">Save to Google Sheet</button>
+      <button class="btn-primary" onclick="copyLabel()">Copy Label</button>
+      <button class="btn-secondary" onclick="showForm()">Back / New Box</button>
+    </div>
+  `;
+}
+
+function copyLabel() {
+  let label = generateLabelText();
+
+  navigator.clipboard.writeText(label).then(() => {
+    if (navigator.vibrate) {
+      navigator.vibrate([80, 40, 80]);
+    }
+    alert("✅ Box Label copied!");
+  });
+}
+
+async function savePacking() {
+  let payload = {
+    type: "packing",
+    date: packingData.date,
+    eventName: packingData.eventName,
+    location: packingData.location,
+    boxNo: packingData.boxNo,
+    boxType: packingData.boxType,
+    packedBy: packingData.packedBy,
+    totalQty: getTotalQty(),
+    items: packingData.items
+  };
+
+  try {
+    await fetch(WEB_APP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify(payload)
+    });
+
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 50, 100]);
+    }
+
+    alert("✅ Packing saved to Google Sheet!");
+
+  } catch (err) {
+    alert("❌ Failed to save.");
+    console.log(err);
+  }
+}
+
+showForm();
+</script>
+
+</body>
+</html>
