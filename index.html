@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mixue Event Booth System V1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      margin: 0;
+      color: #222;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #d60000, #ff3b3b);
+      color: white;
+      padding: 22px 18px;
+      border-radius: 0 0 24px 24px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .header p {
+      margin: 6px 0 0;
+      opacity: 0.9;
+    }
+
+    .container {
+      padding: 18px;
+      max-width: 620px;
+      margin: auto;
+    }
+
+    .box {
+      background: white;
+      padding: 18px;
+      border-radius: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #d60000;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .btn-primary {
+      background: #d60000;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #d60000;
+      border: 1px solid #d60000;
+    }
+
+    .btn-green {
+      background: #118c37;
+      color: white;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .check-item input {
+      width: auto;
+    }
+
+    .item-row {
+      background: #fafafa;
+      padding: 12px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      border: 1px solid #eee;
+    }
+
+    .summary-card {
+      background: #fafafa;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+      border-left: 5px solid #d60000;
+    }
+
+    .big {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .green { color: #118c37; }
+    .red { color: #d60000; }
+    .small { font-size: 13px; color: #777; }
+
+    textarea {
+      width: 100%;
+      height: 320px;
+      border-radius: 14px;
+      border: 1px solid #ddd;
+      padding: 14px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>Mixue Event Booth System V1</h1>
+  <p>Opening • Closing • Stock • Cash Report</p>
+</div>
+
+<div class="container">
+  <div id="app"></div>
+</div>
+
+<script>
+let page = 1;
+
+let eventData = {
+  date: "",
+  eventName: "",
+  eventType: "",
+  location: "",
+  staff: "",
+  openingCash: 0,
+  cashSales: 0,
+  qrSales: 0,
+  expenses: 0,
+  closingCash: 0,
+  checklist: {},
+  items: []
+};
+
+const checklistItems = [
+  "Extension Wire",
+  "Ice Box",
+  "Ice Scoop",
+  "Cash Box",
+  "QR Code Stand",
+  "Spoon",
+  "Straw",
+  "Plastic Bag",
+  "Tissue",
+  "Banner / Menu",
+  "Power Bank",
+  "Marker Pen"
+];
+
+const defaultProducts = [
+  { name: "Lemonade", price: 3.00 },
+  { name: "Lemon Jasmine Tea", price: 4.00 },
+  { name: "Lemon Black Tea", price: 4.00 },
+  { name: "Kiwi Jasmine Tea", price: 5.00 },
+  { name: "Fresh Orange", price: 5.00 },
+  { name: "Strawberry Bobo", price: 5.00 },
+  { name: "Strawberry Peach", price: 5.00 },
+  { name: "Peach Jasmine Tea", price: 6.00 },
+  { name: "Milk Tea L", price: 6.50 },
+  { name: "Milk Tea M", price: 5.00 },
+  { name: "Taro Grape", price: 5.00 },
+  { name: "Toffee Hazelnut Latte", price: 4.50 },
+  { name: "Ice Cream Toffee Hazelnut Latte", price: 5.50 },
+  { name: "Kiwi Creamy Drink", price: 4.50 },
+  { name: "Brown Sugar Latte", price: 4.50 },
+  { name: "Strawberry Creamy Drink", price: 4.50 },
+  { name: "Mango Brulee", price: 5.50 },
+  { name: "Toffee Lava Brulee", price: 5.00 },
+  { name: "Original Sundae", price: 5.00 }
+];
+
+function initItems() {
+  if (eventData.items.length === 0) {
+    eventData.items = defaultProducts.map(p => ({
+      name: p.name,
+      price: p.price,
+      stockOut: 0,
+      balance: 0,
+      damage: 0,
+      reason: "-"
+    }));
+  }
+}
+
+function showPage1() {
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>1. Event Info</h2>
+
+      <label>Date</label>
+      <input type="date" id="date">
+
+      <label>Event Name</label>
+      <input type="text" id="eventName" placeholder="Example: Unicity / Politeknik">
+
+      <label>Event Type</label>
+      <select id="eventType">
+        <option>Roadside Booth</option>
+        <option>School Event</option>
+        <option>Concert</option>
+        <option>Marathon</option>
+        <option>Night Event</option>
+        <option>Indoor Event</option>
+        <option>Hot Weather Event</option>
+      </select>
+
+      <label>Location</label>
+      <input type="text" id="location" placeholder="Example: TPU / Stadium / UniMAP">
+
+      <label>Staff / Leader</label>
+      <input type="text" id="staff" placeholder="Staff name">
+
+      <label>Opening Cash (RM)</label>
+      <input type="number" id="openingCash" value="0">
+
+      <button class="btn-primary" onclick="savePage1()">Next</button>
+    </div>
+  `;
+
+  document.getElementById("date").valueAsDate = new Date();
+}
+
+function savePage1() {
+  eventData.date = document.getElementById("date").value;
+  eventData.eventName = document.getElementById("eventName").value;
+  eventData.eventType = document.getElementById("eventType").value;
+  eventData.location = document.getElementById("location").value;
+  eventData.staff = document.getElementById("staff").value;
+  eventData.openingCash = Number(document.getElementById("openingCash").value || 0);
+
+  showPage2();
+}
+
+function showPage2() {
+  let html = `
+    <div class="box">
+      <h2>2. Setup Checklist</h2>
+  `;
+
+  checklistItems.forEach(item => {
+    html += `
+      <div class="check-item">
+        <input type="checkbox" id="check_${item}">
+        <span>${item}</span>
+      </div>
+    `;
+  });
+
+  html += `
+      <button class="btn-secondary" onclick="showPage1()">Back</button>
+      <button class="btn-primary" onclick="savePage2()">Next</button>
+    </div>
+  `;
+
+  document.getElementById("app").innerHTML = html;
+}
+
+function savePage2() {
+  checklistItems.forEach(item => {
+    eventData.checklist[item] = document.getElementById("check_" + item).checked;
+  });
+
+  showPage3();
+}
+
+function showPage3() {
+  initItems();
+
+  let html = `
+    <div class="box">
+      <h2>3. Stock Out / Opening</h2>
+      <p class="small">Fill how many cups/items you bring out.</p>
+  `;
+
+  eventData.items.forEach((item, index) => {
+    html += `
+      <div class="item-row">
+        <b>${item.name}</b>
+        <div class="grid">
+          <div>
+            <label>Qty Out</label>
+            <input type="number" id="out_${index}" value="${item.stockOut}">
+          </div>
+          <div>
+            <label>Price RM</label>
+            <input type="number" id="price_${index}" value="${item.price}" step="0.10">
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `
+      <button class="btn-secondary" onclick="showPage2()">Back</button>
+      <button class="btn-primary" onclick="savePage3()">Next</button>
+    </div>
+  `;
+
+  document.getElementById("app").innerHTML = html;
+}
+
+function savePage3() {
+  eventData.items.forEach((item, index) => {
+    item.stockOut = Number(document.getElementById("out_" + index).value || 0);
+    item.price = Number(document.getElementById("price_" + index).value || 0);
+  });
+
+  showPage4();
+}
+
+function showPage4() {
+  let html = `
+    <div class="box">
+      <h2>4. Closing Stock</h2>
+      <p class="small">Staff fill remaining stock and damage/bocor.</p>
+  `;
+
+  eventData.items
+    .filter(item => item.stockOut > 0)
+    .forEach((item, index) => {
+      let realIndex = eventData.items.indexOf(item);
+
+      html += `
+        <div class="item-row">
+          <b>${item.name}</b>
+          <div class="grid">
+            <div>
+              <label>Balance</label>
+              <input type="number" id="bal_${realIndex}" value="${item.balance}">
+            </div>
+            <div>
+              <label>Damage / Bocor</label>
+              <input type="number" id="damage_${realIndex}" value="${item.damage}">
+            </div>
+          </div>
+
+          <label>Wastage Reason</label>
+          <select id="reason_${realIndex}">
+            <option>-</option>
+            <option>Melted</option>
+            <option>Bocor</option>
+            <option>Wrong Order</option>
+            <option>Fell Down</option>
+            <option>Customer Cancel</option>
+            <option>Expired / Cannot Sell</option>
+          </select>
+        </div>
+      `;
+    });
+
+  html += `
+      <button class="btn-secondary" onclick="showPage3()">Back</button>
+      <button class="btn-primary" onclick="savePage4()">Next</button>
+    </div>
+  `;
+
+  document.getElementById("app").innerHTML = html;
+}
+
+function savePage4() {
+  eventData.items.forEach((item, index) => {
+    if (item.stockOut > 0) {
+      item.balance = Number(document.getElementById("bal_" + index).value || 0);
+      item.damage = Number(document.getElementById("damage_" + index).value || 0);
+      item.reason = document.getElementById("reason_" + index).value;
+    }
+  });
+
+  showPage5();
+}
+
+function showPage5() {
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>5. Cash & Payment</h2>
+
+      <label>Cash Sales (RM)</label>
+      <input type="number" id="cashSales" value="${eventData.cashSales}" step="0.10">
+
+      <label>QR / eWallet Sales (RM)</label>
+      <input type="number" id="qrSales" value="${eventData.qrSales}" step="0.10">
+
+      <label>Expenses (RM)</label>
+      <input type="number" id="expenses" value="${eventData.expenses}" step="0.10">
+
+      <label>Closing Cash in Hand (RM)</label>
+      <input type="number" id="closingCash" value="${eventData.closingCash}" step="0.10">
+
+      <button class="btn-secondary" onclick="showPage4()">Back</button>
+      <button class="btn-primary" onclick="savePage5()">Generate Report</button>
+    </div>
+  `;
+}
+
+function savePage5() {
+  eventData.cashSales = Number(document.getElementById("cashSales").value || 0);
+  eventData.qrSales = Number(document.getElementById("qrSales").value || 0);
+  eventData.expenses = Number(document.getElementById("expenses").value || 0);
+  eventData.closingCash = Number(document.getElementById("closingCash").value || 0);
+
+  showSummary();
+}
+
+function calculateSummary() {
+  let totalSales = 0;
+  let totalSold = 0;
+
+  eventData.items.forEach(item => {
+    item.sold = item.stockOut - item.balance - item.damage;
+    if (item.sold < 0) item.sold = 0;
+    item.sales = item.sold * item.price;
+
+    totalSold += item.sold;
+    totalSales += item.sales;
+  });
+
+  let paymentTotal = eventData.cashSales + eventData.qrSales;
+  let expectedCash = eventData.openingCash + eventData.cashSales - eventData.expenses;
+  let shortSurplus = eventData.closingCash - expectedCash;
+
+  return {
+    totalSales,
+    totalSold,
+    paymentTotal,
+    expectedCash,
+    shortSurplus
+  };
+}
+
+function generateReportText() {
+  let s = calculateSummary();
+
+  let text = `Closing Report - ${eventData.eventName}\n`;
+  text += `Date: ${eventData.date}\n`;
+  text += `Event Type: ${eventData.eventType}\n`;
+  text += `Location: ${eventData.location}\n`;
+  text += `Staff: ${eventData.staff}\n\n`;
+
+  text += `Opening Cash: RM ${eventData.openingCash.toFixed(2)}\n`;
+  text += `Cash Sales: RM ${eventData.cashSales.toFixed(2)}\n`;
+  text += `QR / eWallet: RM ${eventData.qrSales.toFixed(2)}\n`;
+  text += `Expenses: RM ${eventData.expenses.toFixed(2)}\n`;
+  text += `Closing Cash: RM ${eventData.closingCash.toFixed(2)}\n`;
+  text += `Expected Cash: RM ${s.expectedCash.toFixed(2)}\n`;
+  text += `Short / Surplus: RM ${s.shortSurplus.toFixed(2)}\n\n`;
+
+  text += `Stock Summary:\n`;
+
+  eventData.items
+    .filter(item => item.stockOut > 0)
+    .forEach(item => {
+      text += `- ${item.name}: Out ${item.stockOut} | Sold ${item.sold} | Balance ${item.balance} | Damage ${item.damage}`;
+      if (item.reason !== "-") text += ` | Reason: ${item.reason}`;
+      text += `\n`;
+    });
+
+  text += `\nTotal Sold: ${s.totalSold} cups\n`;
+  text += `System Sales Value: RM ${s.totalSales.toFixed(2)}\n`;
+  text += `Payment Total: RM ${s.paymentTotal.toFixed(2)}\n`;
+
+  return text;
+}
+
+function showSummary() {
+  let s = calculateSummary();
+  let shortClass = s.shortSurplus < 0 ? "red" : "green";
+
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>6. Summary Report</h2>
+
+      <div class="summary-card">
+        Total Sold
+        <div class="big">${s.totalSold} cups</div>
+      </div>
+
+      <div class="summary-card">
+        System Sales Value
+        <div class="big green">RM ${s.totalSales.toFixed(2)}</div>
+      </div>
+
+      <div class="summary-card">
+        Payment Total
+        <div class="big">RM ${s.paymentTotal.toFixed(2)}</div>
+      </div>
+
+      <div class="summary-card">
+        Expected Cash
+        <div class="big">RM ${s.expectedCash.toFixed(2)}</div>
+      </div>
+
+      <div class="summary-card">
+        Short / Surplus
+        <div class="big ${shortClass}">RM ${s.shortSurplus.toFixed(2)}</div>
+      </div>
+
+      <button class="btn-green" onclick="saveRecord()">Save Record</button>
+      <button class="btn-primary" onclick="showReportText()">View WhatsApp Report</button>
+      <button class="btn-secondary" onclick="showPage5()">Back</button>
+    </div>
+  `;
+}
+
+function showReportText() {
+  let report = generateReportText();
+
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>WhatsApp Report</h2>
+      <textarea id="reportText">${report}</textarea>
+      <button class="btn-primary" onclick="copyReport()">Copy Report</button>
+      <button class="btn-secondary" onclick="showSummary()">Back</button>
+    </div>
+  `;
+}
+
+function copyReport() {
+  let text = document.getElementById("reportText");
+  text.select();
+  document.execCommand("copy");
+
+  if (navigator.vibrate) {
+    navigator.vibrate([80, 40, 80]);
+  }
+
+  alert("Report copied!");
+}
+
+function saveRecord() {
+  let s = calculateSummary();
+
+  let record = {
+    date: eventData.date,
+    eventName: eventData.eventName,
+    eventType: eventData.eventType,
+    location: eventData.location,
+    staff: eventData.staff,
+    totalSold: s.totalSold,
+    totalSales: s.totalSales,
+    paymentTotal: s.paymentTotal,
+    shortSurplus: s.shortSurplus,
+    data: eventData,
+    savedAt: new Date().toLocaleString()
+  };
+
+  let records = JSON.parse(localStorage.getItem("eventRecords")) || [];
+  records.push(record);
+  localStorage.setItem("eventRecords", JSON.stringify(records));
+
+  if (navigator.vibrate) {
+    navigator.vibrate([100, 50, 100]);
+  }
+
+  alert("Record saved!");
+}
+
+showPage1();
+</script>
+
+</body>
+</html>
