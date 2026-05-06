@@ -131,7 +131,7 @@
       border: 2px dashed #d60000;
       padding: 18px;
       border-radius: 18px;
-      white-space: pre-wrap;
+      white-space: pre-line;
       font-size: 15px;
       line-height: 1.5;
       margin-bottom: 14px;
@@ -434,15 +434,25 @@ function generateAllLabels() {
 
   let label = generateLabelText();
 
-  document.getElementById("app").innerHTML = `
+ document.getElementById("app").innerHTML = `
     <div class="box">
       <h2>Box Label Preview</h2>
 
-      <div class="label-preview">${label}</div>
+      <div class="label-preview">
+        ${label.replace(/\n/g, "<br>")}
+      </div>
 
-      <button class="btn-green" onclick="saveAllBoxes()">Save All Boxes to Google Sheet</button>
-      <button class="btn-primary" onclick="copyLabel()">Copy Packing Report</button>
-      <button class="btn-secondary" onclick="showForm()">Back / Edit</button>
+      <button class="btn-green" onclick="saveAllBoxes()">
+        Save All Boxes to Google Sheet
+      </button>
+
+      <button class="btn-primary" onclick="copyLabel()">
+        Copy Packing Report
+      </button>
+
+      <button class="btn-secondary" onclick="showForm()">
+        Back / Edit
+      </button>
     </div>
   `;
 }
