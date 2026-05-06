@@ -345,7 +345,7 @@ async function savePacking() {
   };
 
   try {
-    await fetch(WEB_APP_URL, {
+    await fetch("https://script.google.com/macros/s/AKfycbwJnWzuAQqw44aq_-tL3GfLb2uXPOojaC2Ba2dfxiZWdqwYwkSHKirAzTy1qNBku5YG/exec", {
       method: "POST",
       mode: "no-cors",
       body: JSON.stringify(payload)
