@@ -1,0 +1,182 @@
+# Mixue Packing System V10.2 Premium UI Final
+
+建议新文件名：
+
+```text
+packing-v10.2.html
+```
+
+测试链接：
+
+```text
+https://mixuekangarperlis4896.github.io/mixue-event-booth-system/packing-v10.2.html?version=102
+```
+
+Commit message：
+
+```text
+Add Mixue Packing System V10.2 Premium UI Final
+```
+
+---
+
+## 完整 HTML Code
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mixue Packing System V10.2 Premium</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --red:#e60012;--red2:#ff2d55;--dark:#151515;--green:#10984a;--blue:#2563eb;--orange:#f59e0b;--purple:#7c3aed;
+  --bg:#f4f5f7;--card:rgba(255,255,255,.92);--line:#ececec;--text:#1f2937;--muted:#6b7280;
+}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#f7f7f7,#eef0f4);color:var(--text)}
+.app{max-width:880px;margin:auto;padding-bottom:120px}
+.hero{position:sticky;top:0;z-index:99;background:linear-gradient(135deg,#b90000,#e60012 48%,#ff4d67);color:white;padding:24px 18px 26px;border-radius:0 0 30px 30px;box-shadow:0 14px 34px rgba(230,0,18,.25)}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{width:52px;height:52px;border-radius:18px;background:white;color:var(--red);display:grid;place-items:center;font-size:28px;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+.hero h1{font-size:24px;line-height:1.1;margin:0;font-weight:900;letter-spacing:-.5px}.hero p{margin:7px 0 0;opacity:.92;font-size:13px}.pill{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);padding:8px 10px;border-radius:999px;font-size:12px;white-space:nowrap}
+.container{padding:18px;animation:fadeIn .35s ease}.box,.dash-card,.list-card{background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.7);box-shadow:0 10px 28px rgba(0,0,0,.08)}
+.box{padding:18px;border-radius:26px;margin-bottom:16px}.section-title{display:flex;align-items:center;gap:10px;margin:0 0 14px;color:var(--red);font-size:19px;font-weight:900}.icon{width:34px;height:34px;border-radius:14px;display:grid;place-items:center;background:#fff0f2;color:var(--red)}
+.small{font-size:13px;color:var(--muted);line-height:1.45}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dashboard{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}.dash-card{border-radius:22px;padding:16px;text-align:center;min-height:108px;display:flex;flex-direction:column;justify-content:center}.dash-card h3{font-size:12px;color:var(--muted);margin:0 0 8px}.dash-card p{font-size:25px;font-weight:900;margin:0;color:var(--dark)}.dash-card.red p{color:var(--red)}.dash-card.green p{color:var(--green)}.dash-card.blue p{color:var(--blue)}.dash-card.orange p{color:var(--orange)}
+label{display:block;font-size:13px;font-weight:800;margin:12px 0 6px;color:#111827}input,select,textarea{width:100%;padding:14px 13px;border-radius:16px;border:1px solid #e5e7eb;background:white;font-size:16px;outline:none;transition:.2s}textarea{min-height:92px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--red2);box-shadow:0 0 0 4px rgba(255,45,85,.12)}
+button{width:100%;padding:15px;border:0;border-radius:18px;font-size:16px;font-weight:900;cursor:pointer;margin-top:12px;transition:.16s;box-shadow:0 8px 18px rgba(0,0,0,.08)}button:active{transform:scale(.985)}button:disabled{opacity:.65;cursor:not-allowed}.btn-primary{background:linear-gradient(135deg,var(--red),var(--red2));color:white}.btn-green{background:linear-gradient(135deg,#0f8f42,#20c15a);color:white}.btn-blue{background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:white}.btn-orange{background:linear-gradient(135deg,#f59e0b,#ffbd38);color:white}.btn-purple{background:linear-gradient(135deg,#6d28d9,#8b5cf6);color:white}.btn-grey{background:#eef0f3;color:#374151}.btn-secondary{background:white;color:var(--red);border:1px solid var(--red);box-shadow:none}
+.tab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.quick{padding:14px 8px;border-radius:20px;background:white;border:1px solid #eee;text-align:center;font-weight:900;color:#333;box-shadow:0 6px 18px rgba(0,0,0,.06);cursor:pointer}.quick span{display:block;font-size:26px;margin-bottom:6px}.quick small{font-size:11px;color:#666}.item-row,.box-card{background:#fff;border:1px solid #eee;border-radius:20px;padding:14px;margin-bottom:12px}.box-card{border:1.5px solid #ffd4da}.preview{background:white;border:2px dashed var(--red);padding:18px;border-radius:22px;white-space:pre-line;font-size:15px;line-height:1.55;margin-bottom:14px}.hq-preview{border-color:var(--blue)}.warning{background:#fff0f0;color:#d60000;border:1px solid #ffc4c4;padding:12px;border-radius:16px;font-weight:800;margin-top:12px;line-height:1.45}.ok{background:#ecfdf3;color:#067a36;border:1px solid #b7efc8;padding:12px;border-radius:16px;font-weight:800;margin-top:12px}.notice{background:#eff6ff;color:#1757b8;border:1px solid #bfdbfe;padding:13px;border-radius:16px;margin-top:12px;line-height:1.45}.action-buttons{position:sticky;bottom:18px;z-index:999;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:14px;border-radius:26px;box-shadow:0 -8px 30px rgba(0,0,0,.15);margin-top:18px}.list-card{border-radius:18px;padding:14px;margin-bottom:12px;line-height:1.5}.status{display:inline-block;padding:4px 9px;border-radius:999px;background:#e8f8ed;color:var(--green);font-size:12px;font-weight:900}.bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:1000;width:100%;max-width:880px;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-top:1px solid #eee;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 6px 10px}.nav-item{text-align:center;font-size:11px;color:#555;font-weight:700;cursor:pointer}.nav-item b{display:block;font-size:21px;margin-bottom:2px}.nav-item.active{color:var(--red)}
+#statusMsg{display:none;margin-top:12px;padding:12px;border-radius:16px;background:#fff4f4;color:var(--red);font-weight:900;text-align:center}.hide{display:none!important}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@media(max-width:560px){.grid,.dashboard{grid-template-columns:1fr}.tab-grid{grid-template-columns:1fr 1fr}.hero h1{font-size:22px}.container{padding:14px 14px 110px}}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <div class="hero">
+    <div class="hero-top">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="logo">☃️</div>
+        <div>
+          <h1>Mixue Packing System V10.2</h1>
+          <p>Premium Operation System • Packing • Runner • Wastage • AI</p>
+        </div>
+      </div>
+      <div class="pill" id="heroStaff">Not Login</div>
+    </div>
+  </div>
+
+  <div class="container"><div id="app"></div></div>
+</div>
+
+<div class="bottom-nav" id="bottomNav" style="display:none">
+  <div class="nav-item active" onclick="showHome()"><b>🏠</b>Home</div>
+  <div class="nav-item" onclick="showPackingForm()"><b>📦</b>Packing</div>
+  <div class="nav-item" onclick="showHistory()"><b>🕘</b>History</div>
+  <div class="nav-item" onclick="showWastageForm()"><b>🗑️</b>Wastage</div>
+  <div class="nav-item" onclick="showRunnerForm()"><b>🚚</b>Runner</div>
+</div>
+
+<script>
+const WEB_APP_URL="https://script.google.com/macros/s/AKfycbwJnWzuAQqw44aq_-tL3GfLb2uXPOojaC2Ba2dfxiZWdqwYwkSHKirAzTy1qNBku5YG/exec";
+const products=["Lemonade","Lemon Jasmine Tea","Lemon Black Tea","Kiwi Jasmine Tea","Fresh Orange","Strawberry Bobo","Strawberry Peach","Peach Jasmine Tea","Milk Tea L","Milk Tea M","Taro Grape","Toffee Hazelnut Latte","Ice Cream Toffee Hazelnut Latte","Kiwi Creamy Drink","Brown Sugar Latte","Strawberry Creamy Drink","Mango Brulee","Toffee Lava Brulee","Original Sundae","Taro Sundae","Taro Ice Cream Cone"];
+const outlets=["Mixue Kangar","Mixue Kuala Perlis","Mixue Taman Putra Utama"];
+let currentStaff=JSON.parse(localStorage.getItem("mixueCurrentStaffV102")||"null");
+let eventHistory=JSON.parse(localStorage.getItem("mixueEventHistoryV102")||"[]");
+let wastageHistory=JSON.parse(localStorage.getItem("mixueWastageHistoryV102")||"[]");
+let runnerHistory=JSON.parse(localStorage.getItem("mixueRunnerHistoryV102")||"[]");
+let boxes=[{boxNo:"Box 1",boxType:"L Cup Box",items:[{product:"Lemonade",qty:0}]}];
+let savedPackingInfo={};
+
+function saveLocal(){localStorage.setItem("mixueEventHistoryV102",JSON.stringify(eventHistory));localStorage.setItem("mixueWastageHistoryV102",JSON.stringify(wastageHistory));localStorage.setItem("mixueRunnerHistoryV102",JSON.stringify(runnerHistory))}
+function updateHero(){document.getElementById("heroStaff").innerHTML=currentStaff?`${currentStaff.name} • ${currentStaff.outlet.replace('Mixue ','')}`:"Not Login";document.getElementById("bottomNav").style.display=currentStaff?"grid":"none"}
+function iconTitle(icon,title){return `<h2 class="section-title"><span class="icon">${icon}</span>${title}</h2>`}
+function showLogin(){updateHero();document.getElementById("app").innerHTML=`<div class="box">${iconTitle('🔐','Staff Login')}<p class="small">Enter staff name and PIN before operation.</p><label>Staff Name</label><input id="loginName" placeholder="Example: Aina"><label>Outlet</label><select id="loginOutlet">${outlets.map(o=>`<option>${o}</option>`).join('')}</select><label>Role</label><select id="loginRole"><option>Staff</option><option>Shop Leader</option><option>Runner</option><option>Admin</option><option>Boss</option></select><label>PIN Code</label><input type="password" id="loginPin" placeholder="Default PIN: 1234"><button class="btn-primary" onclick="loginStaff()">Login</button><div class="notice">Demo PIN: <b>1234</b>. Later can change to real staff PIN.</div></div>`}
+function loginStaff(){const name=loginName.value.trim(),outlet=loginOutlet.value,role=loginRole.value,pin=loginPin.value.trim();if(!name||!pin)return alert('Please fill Staff Name and PIN.');if(pin!=="1234")return alert('Wrong PIN.');currentStaff={name,outlet,role,loginTime:new Date().toLocaleString()};localStorage.setItem("mixueCurrentStaffV102",JSON.stringify(currentStaff));showHome()}
+function logoutStaff(){currentStaff=null;localStorage.removeItem("mixueCurrentStaffV102");showLogin()}
+function requireLogin(){if(!currentStaff){showLogin();return false}updateHero();return true}
+
+function renderTopDashboard(){const today=new Date().toISOString().slice(0,10);const todayEvents=eventHistory.filter(e=>e.date===today);const todayCups=todayEvents.reduce((s,e)=>s+Number(e.grandTotalQty||0),0);const totalWastage=wastageHistory.reduce((s,w)=>s+Number(w.wastageQty||0),0);return `<div class="dashboard"><div class="dash-card red"><h3>Today Events</h3><p>${todayEvents.length}</p></div><div class="dash-card green"><h3>Today Cups</h3><p>${todayCups}</p></div><div class="dash-card blue"><h3>Total Reports</h3><p>${eventHistory.length}</p></div><div class="dash-card orange"><h3>Wastage</h3><p>${totalWastage}</p></div></div>`}
+function showHome(){if(!requireLogin())return;document.getElementById("app").innerHTML=`${renderTopDashboard()}<div class="box">${iconTitle('👋',`Welcome, ${currentStaff.name}`)}<p class="small">${currentStaff.outlet} • ${currentStaff.role} • Login: ${currentStaff.loginTime}</p><div class="tab-grid"><div class="quick" onclick="showPackingForm()"><span>📦</span>New Packing<small>Box & Product</small></div><div class="quick" onclick="showHistory()"><span>🕘</span>Event History<small>Past reports</small></div><div class="quick" onclick="showWastageForm()"><span>🗑️</span>Wastage<small>Return / loss</small></div><div class="quick" onclick="showRunnerForm()"><span>🚚</span>Runner<small>Delivery tracking</small></div><div class="quick" onclick="showAISuggestion()"><span>✨</span>AI Suggest<small>Smart estimate</small></div><div class="quick" onclick="showLiveDashboard()"><span>📊</span>Dashboard<small>Overview</small></div></div><button class="btn-grey" onclick="logoutStaff()">Logout</button></div><div class="notice"><b>Recommended Flow:</b> Packing → Save → Export PDF → Runner Delivery → Wastage Record.</div>`}
+function renderPackingDashboard(){return `<div class="dashboard"><div class="dash-card red"><h3>Total Boxes</h3><p id="dashBoxes">0</p></div><div class="dash-card green"><h3>Total Cups</h3><p id="dashCups">0</p></div><div class="dash-card blue"><h3>Top Product</h3><p id="dashTop" style="font-size:15px">-</p></div><div class="dash-card orange"><h3>Capacity</h3><p id="dashStatus" style="font-size:17px">OK</p></div></div>`}
+function showPackingForm(){if(!requireLogin())return;document.getElementById("app").innerHTML=`${renderPackingDashboard()}<div class="box">${iconTitle('📝','Step 1: Event Information')}<label>Date</label><input type="date" id="date"><label>Event Name</label><input id="eventName" placeholder="Follow event banner name"><label>Outlet</label><select id="outletSelect">${outlets.map(o=>`<option ${o===currentStaff.outlet?'selected':''}>${o}</option>`).join('')}</select><label>Location</label><select id="locationSelect" onchange="toggleOtherLocation()"><option>UniMAP Unicity Padang Besar</option><option>UniMAP Wang Ulu</option><option>UniMAP PF 1</option><option>Politeknik Pauh</option><option>UiTM Arau</option><option>Other Location</option></select><div id="otherLocationBox" class="hide"><label>Other Location</label><input id="otherLocation" placeholder="Write event location"></div><label>Checked By</label><input id="checkedBy" value="${currentStaff.name}"></div><div class="box">${iconTitle('📦','Step 2: Box & Product Details')}<p class="small">L Cup Max 39 • M Cup Max 40 • Sundae Cup Max 56</p><div id="boxesArea"></div><div id="capacityWarningArea"></div><button class="btn-secondary" onclick="addBox()">+ Add Box</button><button class="btn-primary" onclick="generateAllLabels()">Generate Preview</button><button class="btn-grey" onclick="showHome()">Back Home</button></div>`;date.valueAsDate=new Date();renderBoxes();updatePackingDashboard()}
+function toggleOtherLocation(){otherLocationBox.classList.toggle('hide',locationSelect.value!=="Other Location")}
+function boxTypeOptions(sel){return ["L Cup Box","M Cup Box","U Cup Sundae Box","Mixed Box","Accessories Box"].map(t=>`<option value="${t}" ${t===sel?'selected':''}>${t}</option>`).join('')}
+function productOptions(sel){return products.map(p=>`<option value="${p}" ${p===sel?'selected':''}>${p}</option>`).join('')}
+function renderBoxes(){let html='';boxes.forEach((box,bi)=>{html+=`<div class="box-card"><h3 style="margin:0 0 10px;color:var(--red)">📦 ${box.boxNo}</h3><div class="grid"><div><label>Box No</label><input value="${box.boxNo}" oninput="boxes[${bi}].boxNo=this.value;updatePackingDashboard();renderCapacityWarnings()"></div><div><label>Box Type</label><select onchange="boxes[${bi}].boxType=this.value;updatePackingDashboard();renderCapacityWarnings()">${boxTypeOptions(box.boxType)}</select></div></div><h3 style="margin-top:16px;color:#333">Items</h3>${renderItems(bi)}<button class="btn-secondary" onclick="addItem(${bi})">+ Add Item</button><button class="btn-grey" onclick="removeBox(${bi})">Remove Box</button></div>`});boxesArea.innerHTML=html;renderCapacityWarnings();updatePackingDashboard()}
+function renderItems(bi){return boxes[bi].items.map((it,ii)=>`<div class="item-row"><label>Product</label><select onchange="boxes[${bi}].items[${ii}].product=this.value;updatePackingDashboard()">${productOptions(it.product)}</select><label>Qty</label><input type="number" min="0" value="${it.qty}" oninput="boxes[${bi}].items[${ii}].qty=Number(this.value||0);updatePackingDashboard();renderCapacityWarnings()"><button class="btn-secondary" onclick="removeItem(${bi},${ii})">Remove Item</button></div>`).join('')}
+function addBox(){boxes.push({boxNo:"Box "+(boxes.length+1),boxType:"Mixed Box",items:[{product:"Lemonade",qty:0}]});renderBoxes()}function removeBox(i){if(boxes.length===1)return alert('At least 1 box required.');boxes.splice(i,1);renderBoxes()}function addItem(i){boxes[i].items.push({product:"Lemonade",qty:0});renderBoxes()}function removeItem(bi,ii){if(boxes[bi].items.length===1)return alert('At least 1 item required.');boxes[bi].items.splice(ii,1);renderBoxes()}
+function getLocation(){return locationSelect.value==="Other Location"?otherLocation.value.trim():locationSelect.value}function getCapacity(t){if(t==="L Cup Box")return 39;if(t==="M Cup Box")return 40;if(t==="U Cup Sundae Box")return 56;return null}function getTotalQty(b){return b.items.reduce((s,i)=>s+Number(i.qty||0),0)}function getGrandTotalQty(){return boxes.reduce((s,b)=>s+getTotalQty(b),0)}
+function getWarnings(){let w=[];boxes.forEach(b=>{const max=getCapacity(b.boxType),total=getTotalQty(b);if(max&&total>max)w.push(`${b.boxNo} exceeded ${b.boxType} by ${total-max} cups. Max ${max}, current ${total}`)});return w}
+function renderCapacityWarnings(){const area=document.getElementById('capacityWarningArea');if(!area)return;const w=getWarnings();area.innerHTML=w.length?w.map(x=>`<div class="warning">⚠ ${x}</div>`).join(''):`<div class="ok">✅ All boxes are within capacity limit.</div>`}
+function getTopProduct(){const m={};boxes.forEach(b=>b.items.forEach(i=>{const q=Number(i.qty||0);if(q>0)m[i.product]=(m[i.product]||0)+q}));let n='-',q=0;Object.keys(m).forEach(p=>{if(m[p]>q){n=p;q=m[p]}});return q?`${n} (${q})`:'-'}
+function updatePackingDashboard(){['dashBoxes','dashCups','dashTop','dashStatus'].forEach(id=>{if(!document.getElementById(id))return});if(!document.getElementById('dashBoxes'))return;dashBoxes.innerHTML=boxes.length;dashCups.innerHTML=getGrandTotalQty();dashTop.innerHTML=getTopProduct();let w=getWarnings();dashStatus.innerHTML=w.length?'Warning':'OK';dashStatus.style.color=w.length?'#e60012':'#10984a'}
+function validateData(){if(!eventName.value.trim()||!checkedBy.value.trim()||!getLocation())return alert('Please fill Event Name, Location and Checked By.'),false;for(let b of boxes){if(!b.boxNo||getTotalQty(b)<=0)return alert('Every box must have Box No and at least 1 item quantity.'),false}if(getWarnings().length&&!confirm('Some boxes exceeded capacity. Continue anyway?'))return false;return true}
+function generateLabelText(){const date=savedPackingInfo.date||document.getElementById('date').value,event=savedPackingInfo.eventName||eventName.value,location=savedPackingInfo.location||getLocation(),outlet=savedPackingInfo.outlet||outletSelect.value,checked=savedPackingInfo.checkedBy||checkedBy.value;let t=`Packing Report
+Date: ${date}
+Event: ${event}
+Outlet: ${outlet}
+Location: ${location}
+Checked By: ${checked}
+Login Staff: ${currentStaff.name}
+Total Boxes: ${boxes.length}
+Total Cups: ${getGrandTotalQty()}
+
+`;boxes.forEach((b,idx)=>{const max=getCapacity(b.boxType),total=getTotalQty(b);t+=`${b.boxNo} / ${b.boxType}
+Total Qty: ${total}${max?` / Max ${max}`:''}
+`;b.items.filter(i=>Number(i.qty)>0).forEach((i,j)=>t+=`${j+1}. ${i.product} (${i.qty})
+`);if(idx!==boxes.length-1)t+='
+'});return t}
+function generateHQFormatText(){const date=savedPackingInfo.date||date.value,event=savedPackingInfo.eventName||eventName.value,location=savedPackingInfo.location||getLocation(),outlet=savedPackingInfo.outlet||outletSelect.value;let t=`Order for ${event} (${date})
+${outlet}
+Location: ${location}
+
+`;boxes.forEach(b=>{t+=`1 Kotak Besar - ${b.boxNo} (${b.boxType})
+`;b.items.filter(i=>Number(i.qty)>0).forEach((i,j)=>t+=`${j+1}. ${i.product} (${i.qty})
+`);t+='
+'});t+=`Total Boxes: ${boxes.length}
+Total Cups: ${getGrandTotalQty()}
+`;return t}
+function generateAllLabels(){if(!validateData())return;savedPackingInfo={id:'EVT-'+Date.now(),date:date.value,eventName:eventName.value.trim(),outlet:outletSelect.value,location:getLocation(),checkedBy:checkedBy.value.trim()};const label=generateLabelText(),hq=generateHQFormatText(),w=getWarnings();document.getElementById('app').innerHTML=`${renderPackingDashboard()}<div class="box">${iconTitle('✅','Step 3: Preview & Save')}${w.length?w.map(x=>`<div class="warning">⚠ ${x}</div>`).join(''):`<div class="ok">✅ All boxes are within capacity limit.</div>`}<h3>Packing Report</h3><div class="preview">${label}</div><h3>HQ WhatsApp Format</h3><div class="preview hq-preview">${hq}</div><div class="action-buttons"><button id="saveBtn" class="btn-green">💾 Save All Boxes to Google Sheet</button><button id="copyPackingBtn" class="btn-primary">📋 Copy Packing Report</button><button id="copyHQBtn" class="btn-blue">📄 Copy HQ Format</button><button id="pdfBtn" class="btn-orange">🖨️ Export PDF</button><button id="backBtn" class="btn-secondary">← Back / Edit</button><button class="btn-grey" onclick="showHome()">Home</button><div id="statusMsg"></div></div></div>`;saveBtn.onclick=saveAllBoxes;copyPackingBtn.onclick=()=>copyText(generateLabelText(),'✅ Packing Report copied!');copyHQBtn.onclick=()=>copyText(generateHQFormatText(),'✅ HQ WhatsApp Format copied!');pdfBtn.onclick=exportPDF;backBtn.onclick=showPackingForm;updatePackingDashboard()}
+function showStatus(m){const s=document.getElementById('statusMsg');if(s){s.style.display='block';s.innerHTML=m}}
+function copyText(text,msg){const fb=()=>{let ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()};try{if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(()=>{showStatus(msg);alert(msg)}).catch(()=>{fb();showStatus(msg);alert(msg)})}else{fb();showStatus(msg);alert(msg)}}catch(e){fb();showStatus(msg);alert(msg)}}
+async function saveAllBoxes(){saveBtn.disabled=true;saveBtn.innerHTML='Saving... Please wait';showStatus('⏳ Saving to Google Sheet...');try{let rec={...savedPackingInfo,version:'V10.2 Premium',staffName:currentStaff.name,staffRole:currentStaff.role,totalBoxes:boxes.length,grandTotalQty:getGrandTotalQty(),topProduct:getTopProduct(),capacityStatus:getWarnings().length?'Warning':'OK',createdAt:new Date().toLocaleString(),boxes:JSON.parse(JSON.stringify(boxes))};eventHistory.unshift(rec);saveLocal();for(let b of boxes){const max=getCapacity(b.boxType);let payload={type:'packing',version:'V10.2 Premium',eventId:savedPackingInfo.id,date:savedPackingInfo.date,eventName:savedPackingInfo.eventName,outlet:savedPackingInfo.outlet,location:savedPackingInfo.location,boxNo:b.boxNo,boxType:b.boxType,packedBy:currentStaff.name,checkedBy:savedPackingInfo.checkedBy,totalQty:getTotalQty(b),capacityMax:max||'N/A',capacityStatus:max&&getTotalQty(b)>max?'Exceeded':'OK',grandTotalQty:getGrandTotalQty(),totalBoxes:boxes.length,topProduct:getTopProduct(),items:b.items.filter(i=>Number(i.qty)>0)};await fetch(WEB_APP_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})}showStatus('✅ Saved to Google Sheet and Event History!');alert('✅ Saved to Google Sheet and Event History!')}catch(e){console.log(e);showStatus('❌ Failed to save. Check internet or Google Script.');alert('❌ Failed to save.')}finally{saveBtn.disabled=false;saveBtn.innerHTML='💾 Save All Boxes to Google Sheet'}}
+function exportPDF(){let c=`<html><head><title>Mixue Packing Report</title><style>body{font-family:Arial;padding:24px}h1{color:#e60012}pre{white-space:pre-wrap;line-height:1.5}</style></head><body><h1>Mixue Packing Report</h1><pre>${generateLabelText()}</pre><h2>HQ WhatsApp Format</h2><pre>${generateHQFormatText()}</pre></body></html>`;let w=window.open('','_blank');w.document.write(c);w.document.close();w.focus();setTimeout(()=>w.print(),500)}
+function showHistory(){if(!requireLogin())return;let html=eventHistory.map((e,i)=>`<div class="list-card"><b>${e.eventName}</b> <span class="status">${e.capacityStatus}</span><br>${e.date} • ${e.outlet}<br>${e.location}<br>${e.totalBoxes} boxes • ${e.grandTotalQty} cups<br>Staff: ${e.staffName}<button class="btn-blue" onclick="copyHistoryReport(${i})">Copy Report</button></div>`).join('');app.innerHTML=`<div class="box">${iconTitle('🕘','Event History')}${html||'<div class="notice">No event history yet.</div>'}<button class="btn-grey" onclick="showHome()">Back Home</button></div>`}
+function copyHistoryReport(i){let e=eventHistory[i],t=`Event History Report
+Date: ${e.date}
+Event: ${e.eventName}
+Outlet: ${e.outlet}
+Location: ${e.location}
+Staff: ${e.staffName}
+Total Boxes: ${e.totalBoxes}
+Total Cups: ${e.grandTotalQty}
+
+`;e.boxes.forEach(b=>{t+=`${b.boxNo} / ${b.boxType}
+`;b.items.filter(x=>Number(x.qty)>0).forEach((x,j)=>t+=`${j+1}. ${x.product} (${x.qty})
+`);t+='
+'});copyText(t,'✅ History report copied!')}
+function showWastageForm(){if(!requireLogin())return;app.innerHTML=`<div class="box">${iconTitle('🗑️','Wastage Record')}<label>Date</label><input type="date" id="wDate"><label>Event Name</label><input id="wEvent" placeholder="Event name"><label>Outlet</label><select id="wOutlet">${outlets.map(o=>`<option ${o===currentStaff.outlet?'selected':''}>${o}</option>`).join('')}</select><label>Product</label><select id="wProduct">${products.map(p=>`<option>${p}</option>`).join('')}</select><div class="grid"><div><label>Sent Qty</label><input type="number" id="wSent" value="0"></div><div><label>Sold Qty</label><input type="number" id="wSold" value="0"></div><div><label>Returned Qty</label><input type="number" id="wReturned" value="0"></div><div><label>Wastage Qty</label><input type="number" id="wQty" value="0"></div></div><label>Reason</label><select id="wReason"><option>Unsold</option><option>Melted</option><option>Broken Cup</option><option>Customer Return</option><option>Staff Mistake</option><option>Others</option></select><label>Note</label><textarea id="wNote"></textarea><button class="btn-orange" onclick="saveWastage()">Save Wastage Record</button><button class="btn-grey" onclick="showHome()">Back Home</button></div>`;wDate.valueAsDate=new Date()}
+function saveWastage(){let r={id:'WAS-'+Date.now(),date:wDate.value,eventName:wEvent.value.trim(),outlet:wOutlet.value,product:wProduct.value,sentQty:+wSent.value||0,soldQty:+wSold.value||0,returnedQty:+wReturned.value||0,wastageQty:+wQty.value||0,reason:wReason.value,note:wNote.value.trim(),staff:currentStaff.name,createdAt:new Date().toLocaleString()};r.missingQty=r.sentQty-r.soldQty-r.returnedQty-r.wastageQty;if(!r.eventName)return alert('Please fill Event Name.');wastageHistory.unshift(r);saveLocal();alert('✅ Wastage saved!');showLiveDashboard()}
+function showRunnerForm(){if(!requireLogin())return;app.innerHTML=`<div class="box">${iconTitle('🚚','Runner Delivery Tracking')}<label>Date</label><input type="date" id="rDate"><label>Runner Name</label><input id="rName" value="${currentStaff.name}"><label>Car Plate</label><input id="rCar" placeholder="RAG 1234"><label>Pickup Outlet</label><select id="rPickup">${outlets.map(o=>`<option ${o===currentStaff.outlet?'selected':''}>${o}</option>`).join('')}</select><label>Drop Location</label><input id="rDrop" placeholder="Event / booth location"><label>Box Count</label><input type="number" id="rBoxCount" value="0"><label>Status</label><select id="rStatus"><option>Pending</option><option>Picked Up</option><option>On The Way</option><option>Delivered</option><option>Returned</option></select><label>Note</label><textarea id="rNote"></textarea><button class="btn-purple" onclick="saveRunner()">Save Runner Record</button><button class="btn-grey" onclick="showHome()">Back Home</button></div>`;rDate.valueAsDate=new Date()}
+function saveRunner(){let r={id:'RUN-'+Date.now(),date:rDate.value,runnerName:rName.value.trim(),carPlate:rCar.value.trim(),pickupOutlet:rPickup.value,dropLocation:rDrop.value.trim(),boxCount:+rBoxCount.value||0,status:rStatus.value,note:rNote.value.trim(),createdAt:new Date().toLocaleString()};if(!r.runnerName||!r.dropLocation)return alert('Please fill Runner Name and Drop Location.');runnerHistory.unshift(r);saveLocal();alert('✅ Runner saved!');showLiveDashboard()}
+function showAISuggestion(){if(!requireLogin())return;app.innerHTML=`<div class="box">${iconTitle('✨','AI Suggested Packing')}<label>Target Audience</label><input type="number" id="aiAudience" value="500"><label>Event Type</label><select id="aiEventType"><option>University</option><option>School</option><option>Marathon</option><option>Night Market</option><option>Corporate</option></select><label>Weather</label><select id="aiWeather"><option>Hot</option><option>Normal</option><option>Rainy</option></select><label>Duration</label><select id="aiDuration"><option value="2">2 hours</option><option value="4" selected>4 hours</option><option value="6">6 hours</option><option value="8">8 hours</option></select><button class="btn-green" onclick="generateAISuggestion()">Generate Suggestion</button><div id="aiResult"></div><button class="btn-grey" onclick="showHome()">Back Home</button></div>`}
+function generateAISuggestion(){let audience=+aiAudience.value||0,type=aiEventType.value,weather=aiWeather.value,dur=+aiDuration.value||4,c=.12;if(type==='University')c=.16;if(type==='School')c=.10;if(type==='Marathon')c=.18;if(type==='Night Market')c=.14;if(type==='Corporate')c=.08;if(weather==='Hot')c+=.04;if(weather==='Rainy')c-=.03;if(dur>=6)c+=.03;let total=Math.max(20,Math.round(audience*c));let lemonade=Math.round(total*.28),peach=Math.round(total*.18),bobo=Math.round(total*.16),milk=Math.round(total*.16),sundae=Math.round(total*.12),others=total-lemonade-peach-bobo-milk-sundae;if(weather==='Hot'){let add=Math.round(total*.08);lemonade+=add;others-=add}let box=Math.ceil(total/40);let text=`Suggested Total: ${total} cups
+
+Lemonade: ${lemonade}
+Peach Jasmine Tea: ${peach}
+Strawberry Bobo: ${bobo}
+Milk Tea L: ${milk}
+Original Sundae: ${sundae}
+Others: ${others}
+
+Suggested Boxes: ${box}
+Estimated Conversion: ${Math.round(c*100)}%`;aiResult.innerHTML=`<div class="preview">${text}</div><button class="btn-blue" onclick="copyText(\`${text}\`,'✅ AI Suggestion copied!')">Copy Suggestion</button>`}
+function showLiveDashboard(){if(!requireLogin())return;const cups=eventHistory.reduce((s,e)=>s+(+e.grandTotalQty||0),0),box=eventHistory.reduce((s,e)=>s+(+e.totalBoxes||0),0),was=wastageHistory.reduce((s,w)=>s+(+w.wastageQty||0),0);let ev=eventHistory.slice(0,5).map(e=>`<div class="list-card"><b>${e.eventName}</b><br>${e.date} • ${e.outlet}<br>${e.totalBoxes} boxes • ${e.grandTotalQty} cups</div>`).join(''),wa=wastageHistory.slice(0,5).map(w=>`<div class="list-card"><b>${w.product}</b> - ${w.wastageQty} wastage<br>Event: ${w.eventName}<br>Missing: ${w.missingQty}<br>${w.reason}</div>`).join(''),ru=runnerHistory.slice(0,5).map(r=>`<div class="list-card"><b>${r.runnerName}</b> - ${r.status}<br>${r.pickupOutlet} → ${r.dropLocation}<br>Boxes: ${r.boxCount}</div>`).join('');app.innerHTML=`<div class="dashboard"><div class="dash-card red"><h3>Total Cups</h3><p>${cups}</p></div><div class="dash-card green"><h3>Total Boxes</h3><p>${box}</p></div><div class="dash-card orange"><h3>Wastage</h3><p>${was}</p></div><div class="dash-card blue"><h3>Runner</h3><p>${runnerHistory.length}</p></div></div><div class="box">${iconTitle('📊','Live Dashboard')}<h3>Recent Events</h3>${ev||'<div class="notice">No event saved yet.</div>'}<h3>Recent Wastage</h3>${wa||'<div class="notice">No wastage record yet.</div>'}<h3>Recent Runner</h3>${ru||'<div class="notice">No runner record yet.</div>'}<button class="btn-secondary" onclick="showHome()">Back Home</button></div>`}
+if(currentStaff)showHome();else showLogin();
+</script>
+</body>
+</html>
+```
+
