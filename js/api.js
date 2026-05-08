@@ -4,30 +4,103 @@ async function saveToGoogleSheet(tab, payload){
   if(!result.success) throw new Error(result.message || "Google Sheet save failed");
   return result;
 }
+
 function $(id){return document.getElementById(id)}
-function setToday(id){const el=$(id); if(el) el.valueAsDate=new Date()}
+
+function setToday(id){
+  const el=$(id);
+  if(el) el.valueAsDate=new Date();
+}
+
 function showStatus(message){
-  const s=$("statusMsg"); if(!s) return;
-  s.style.display="block"; s.innerHTML=message;
+  const s=$("statusMsg");
+  if(!s) return;
+  s.style.display="block";
+  s.innerHTML=message;
 }
+
 function copyText(text,msg){
-  const fallback=()=>{const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();document.execCommand("copy");document.body.removeChild(t)}
+  const fallback=()=>{
+    const t=document.createElement("textarea");
+    t.value=text;
+    document.body.appendChild(t);
+    t.select();
+    document.execCommand("copy");
+    document.body.removeChild(t);
+  };
+
   if(navigator.clipboard && window.isSecureContext){
-    navigator.clipboard.writeText(text).then(()=>{showStatus(msg);alert(msg)}).catch(()=>{fallback();showStatus(msg);alert(msg)})
-  }else{fallback();showStatus(msg);alert(msg)}
+    navigator.clipboard.writeText(text)
+      .then(()=>{showStatus(msg);alert(msg)})
+      .catch(()=>{fallback();showStatus(msg);alert(msg)});
+  }else{
+    fallback();
+    showStatus(msg);
+    alert(msg);
+  }
 }
+
 function getStaff(){
   return JSON.parse(localStorage.getItem("mixueCurrentStaff") || "null");
 }
+
 function requireLogin(){
   const staff=getStaff();
-  if(!staff){ location.href="index.html"; return null; }
+  if(!staff){
+    location.href="index.html";
+    return null;
+  }
   return staff;
 }
+
+function normalizeRole(role){
+  return (role || "").replace(/\s+/g,"").toLowerCase();
+}
+
+function canAccessModule(role, moduleName){
+  const r = normalizeRole(role);
+
+  if(r === "systemcontroller" || r === "admin") return true;
+
+  if(r === "boss"){
+    return moduleName === "home" || moduleName === "dashboard";
+  }
+
+  if(r === "runner"){
+    return moduleName === "home" || moduleName === "runner";
+  }
+
+  if(r === "boothcrew"){
+    return moduleName === "home" || moduleName === "packing" || moduleName === "closing";
+  }
+
+  if(r === "outletcrew"){
+    return moduleName === "home" || moduleName === "packing" || moduleName === "closing";
+  }
+
+  if(r === "outletstaff" || r === "partimerstaff"){
+    return moduleName === "home" || moduleName === "packing" || moduleName === "closing";
+  }
+
+  return moduleName === "home" || moduleName === "packing";
+}
+
 function nav(){
-  return `<div class="topbar">
-    <a href="index.html">Home</a><a href="packing-final.html">Packing</a>
-    <a href="runner-final.html">Runner</a><a href="closing-final.html">Closing</a>
-    <a href="admin-final.html">Admin</a>
-  </div>`;
+  const staff = getStaff();
+  const role = staff ? staff.role : "";
+
+  const links = [
+    {module:"home", label:"Home", href:"index.html"},
+    {module:"packing", label:"Packing", href:"packing-final.html"},
+    {module:"runner", label:"Runner", href:"runner-final.html"},
+    {module:"closing", label:"Closing", href:"closing-final.html"},
+    {module:"dashboard", label:"Admin", href:"admin-final.html"}
+  ];
+
+  const visibleLinks = links
+    .filter(link => canAccessModule(role, link.module))
+    .map(link => `<a href="${link.href}">${link.label}</a>`)
+    .join("");
+
+  return `<div class="topbar">${visibleLinks}</div>`;
 }
