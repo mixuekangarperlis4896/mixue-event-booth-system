@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MPOI - Mixue Perlis Operations Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      margin: 0;
+      color: #222;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #d60000, #ff3030);
+      color: white;
+      padding: 22px 18px;
+      border-radius: 0 0 26px 26px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .header p {
+      margin: 7px 0 0;
+      opacity: 0.95;
+      font-size: 14px;
+    }
+
+    .container {
+      padding: 18px;
+      padding-bottom: 260px !important;
+      max-width: 820px;
+      margin: auto;
+    }
+
+    .box {
+      background: white;
+      padding: 18px;
+      border-radius: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h2, h3 {
+      margin-top: 0;
+      color: #d60000;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .dash-card {
+      background: white;
+      padding: 16px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .dash-card h3 {
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #555;
+    }
+
+    .dash-card p {
+      font-size: 23px;
+      font-weight: bold;
+      margin: 0;
+      color: #d60000;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+      position: relative;
+      z-index: 10001;
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .btn-primary { background: #d60000; color: white; }
+    .btn-secondary { background: white; color: #d60000; border: 1px solid #d60000; }
+    .btn-green { background: #118c37; color: white; }
+    .btn-blue { background: #2563eb; color: white; }
+    .btn-orange { background: #f59e0b; color: white; }
+    .btn-purple { background: #7c3aed; color: white; }
+    .btn-grey { background: #e5e5e5; color: #333; }
+
+    .item-row {
+      background: #fafafa;
+      padding: 12px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      border: 1px solid #eee;
+    }
+
+    .box-card {
+      border: 2px solid #f0d0d0;
+      background: #fff;
+      padding: 16px;
+      border-radius: 18px;
+      margin-bottom: 18px;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .preview {
+      background: #fff;
+      border: 2px dashed #d60000;
+      padding: 18px;
+      border-radius: 18px;
+      white-space: pre-line;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .hq-preview { border-color: #2563eb; }
+
+    .warning {
+      background: #ffe6e6;
+      color: #d60000;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 12px;
+      line-height: 1.45;
+    }
+
+    .ok {
+      background: #e9f8ee;
+      color: #118c37;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    .notice {
+      background: #eef6ff;
+      color: #1757b8;
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 12px;
+      line-height: 1.45;
+    }
+
+    .action-buttons {
+      position: sticky;
+      bottom: 20px;
+      z-index: 9999;
+      background: white;
+      padding: 14px;
+      border-radius: 18px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+      margin-top: 20px;
+    }
+
+    .tab-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tab-bar button {
+      font-size: 13px;
+      padding: 11px 8px;
+      margin-top: 0;
+    }
+
+    .list-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 14px;
+      padding: 13px;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    #statusMsg {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff4f4;
+      color: #d60000;
+      font-weight: bold;
+      display: none;
+      text-align: center;
+    }
+
+    @media (max-width: 560px) {
+      .grid, .dashboard {
+        grid-template-columns: 1fr;
+      }
+      .tab-bar {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>MPOI</h1>
+  <p style="font-size:13px;">Mixue Perlis Operations Intelligence</p>
+  <p style="margin-top:10px;">Operations • Planning • Packing • Loading • Runner • Booth • Closing • Dashboard</p>
+</div>
+
+<div class="container">
+  <div id="app"></div>
+</div>
+
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzVXhh1jizUE_t-EmmAKG7UHYi6cAIi2-pmpawmnaHJKGjatutYsIl5L5RN7xjKHTCw/exec";
+
+const products = [
+  "Lemonade",
+  "Lemon Jasmine Tea",
+  "Lemon Black Tea",
+  "Kiwi Jasmine Tea",
+  "Fresh Orange",
+  "Strawberry Bobo",
+  "Strawberry Peach",
+  "Peach Jasmine Tea",
+  "Milk Tea L",
+  "Milk Tea M",
+  "Taro Grape",
+  "Toffee Hazelnut Latte",
+  "Ice Cream Toffee Hazelnut Latte",
+  "Kiwi Creamy Drink",
+  "Brown Sugar Latte",
+  "Strawberry Creamy Drink",
+  "Mango Brulee",
+  "Toffee Lava Brulee",
+  "Original Sundae",
+  "Taro Sundae",
+  "Taro Ice Cream Cone"
+];
+
+const outlets = [
+  "Mixue Kangar",
+  "Mixue Kuala Perlis",
+  "Mixue Taman Putra Utama"
+];
+
+let currentStaff = JSON.parse(localStorage.getItem("mixueCurrentStaff") || "null");
+let eventHistory = JSON.parse(localStorage.getItem("mixueEventHistory") || "[]");
+let wastageHistory = JSON.parse(localStorage.getItem("mixueWastageHistory") || "[]");
+let runnerHistory = JSON.parse(localStorage.getItem("mixueRunnerHistory") || "[]");
+
+let boxes = [
+  {
+    boxNo: "Box 1",
+    boxType: "L Cup Box",
+    items: [{ product: "Lemonade", qty: 0 }]
+  }
+];
+
+let savedPackingInfo = {};
+
+function saveLocalData() {
+  localStorage.setItem("mixueEventHistory", JSON.stringify(eventHistory));
+  localStorage.setItem("mixueWastageHistory", JSON.stringify(wastageHistory));
+  localStorage.setItem("mixueRunnerHistory", JSON.stringify(runnerHistory));
+}
+
+function showLogin() {
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>Staff Login</h2>
+      <p class="small">Login first before using the packing system.</p>
+
+      <label>Staff Name</label>
+      <input type="text" id="loginName" placeholder="Staff name">
+
+      <label>Outlet</label>
+      <select id="loginOutlet">
+        ${outlets.map(o => `<option>${o}</option>`).join("")}
+      </select>
+
+      <label>Role</label>
+      <select id="loginRole">
+        <option>Staff</option>
+        <option>Shop Leader</option>
+        <option>Runner</option>
+        <option>Admin</option>
+        <option>Boss</option>
+      </select>
+
+      <label>PIN Code</label>
+      <input type="password" id="loginPin" placeholder="Example: 1234">
+
+      <button class="btn-primary" onclick="loginStaff()">Login</button>
+      <div class="notice">Default demo PIN: 1234. You can change this later.</div>
+    </div>
+  `;
+}
+
+function loginStaff() {
+  const name = document.getElementById("loginName").value.trim();
+  const outlet = document.getElementById("loginOutlet").value;
+  const role = document.getElementById("loginRole").value;
+  const pin = document.getElementById("loginPin").value.trim();
+
+  if (!name || !pin) {
+    alert("Please fill Staff Name and PIN.");
+    return;
+  }
+
+  if (pin !== "1234") {
+    alert("Wrong PIN.");
+    return;
+  }
+
+  currentStaff = {
+    name,
+    outlet,
+    role,
+    loginTime: new Date().toLocaleString()
+  };
+
+  localStorage.setItem("mixueCurrentStaff", JSON.stringify(currentStaff));
+  showHome();
+}
+
+function logoutStaff() {
+  currentStaff = null;
+  localStorage.removeItem("mixueCurrentStaff");
+  showLogin();
+}
+
+function showHome() {
+  if (!currentStaff) {
+    showLogin();
+    return;
+  }
+
+  document.getElementById("app").innerHTML = `
+    ${renderTopDashboard()}
+
+    <div class="box">
+      <h2>Welcome, ${currentStaff.name}</h2>
+      <p class="small">${currentStaff.outlet} • ${currentStaff.role}</p>
+      <button class="btn-grey" onclick="logoutStaff()">Logout</button>
+    </div>
+
+    <div class="box">
+      <h2>MPOI Event Flow</h2>
+      <p class="small">Official Mixue Perlis event operation flow.</p>
+
+      <div class="tab-bar">
+        <button class="btn-blue" onclick="showPlanning()">1. Planning</button>
+        <button class="btn-primary" onclick="showPackingForm()">2. Packing</button>
+        <button class="btn-orange" onclick="showLoadingChecklist()">3. Loading</button>
+        <button class="btn-purple" onclick="showRunnerForm()">4. Runner</button>
+        <button class="btn-green" onclick="showBoothOperation()">5. Booth</button>
+        <button class="btn-secondary" onclick="showClosingSummary()">6. Closing</button>
+        <button class="btn-grey" onclick="showLiveDashboard()">7. Dashboard</button>
+      </div>
+
+      <div class="notice">
+        Official Flow: Planning → Packing → Loading → Runner → Booth → Closing → Dashboard
+      </div>
+    </div>
+  `;
+}
+
+function showPlanning() {
+  document.getElementById("app").innerHTML = `
+    ${renderTopDashboard()}
+
+    <div class="box">
+      <h2>1. Event Planning</h2>
+      <p class="small">Create the event plan before packing starts. This module will later connect to the Planning tab.</p>
+
+      <label>Event Date</label>
+      <input type="date" id="pDate">
+
+      <label>Event Name</label>
+      <input type="text" id="pEventName" placeholder="Example: Unicity Booth">
+
+      <label>Booth / Location</label>
+      <input type="text" id="pLocation" placeholder="Example: UniMAP Unicity">
+
+      <label>Expected Crowd</label>
+      <input type="number" id="pCrowd" min="0" value="0">
+
+      <label>Assigned Outlet</label>
+      <select id="pOutlet">
+        ${outlets.map(o => `<option ${o === currentStaff.outlet ? "selected" : ""}>${o}</option>`).join("")}
+      </select>
+
+      <label>Planning Note</label>
+      <textarea id="pNote" placeholder="Stock estimate, sensitive products, runner notes..."></textarea>
+
+      <button class="btn-blue" onclick="savePlanningDraft()">Save Planning Draft</button>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+  document.getElementById("pDate").valueAsDate = new Date();
+}
+
+function savePlanningDraft() {
+  alert("Planning draft saved on this device. Google Sheet connection will be added in the next phase.");
+}
+
+function showLoadingChecklist() {
+  document.getElementById("app").innerHTML = `
+    ${renderTopDashboard()}
+
+    <div class="box">
+      <h2>3. Loading Checklist</h2>
+      <p class="small">Validate stock and accessories before runner leaves the outlet.</p>
+
+      <div class="list-card"><input type="checkbox"> Packed boxes checked</div>
+      <div class="list-card"><input type="checkbox"> Cups / lids / straws loaded</div>
+      <div class="list-card"><input type="checkbox"> Pearls / toppings loaded</div>
+      <div class="list-card"><input type="checkbox"> QR stand / cash float prepared</div>
+      <div class="list-card"><input type="checkbox"> Sensitive products checked</div>
+      <div class="list-card"><input type="checkbox"> Runner received handover</div>
+
+      <label>Loading Note</label>
+      <textarea placeholder="Write missing item / special instruction..."></textarea>
+
+      <button class="btn-orange" onclick="alert('Loading checklist saved on this device. Google Sheet connection will be added in the next phase.')">Save Loading Checklist</button>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+}
+
+function showBoothOperation() {
+  document.getElementById("app").innerHTML = `
+    ${renderTopDashboard()}
+
+    <div class="box">
+      <h2>5. Booth Operation</h2>
+      <p class="small">Booth status, stock balance and refill request.</p>
+
+      <label>Booth Name</label>
+      <input type="text" placeholder="Example: Unicity Booth">
+
+      <label>Booth Status</label>
+      <select>
+        <option>Preparing</option>
+        <option>Operating</option>
+        <option>Refill Needed</option>
+        <option>Closing</option>
+      </select>
+
+      <label>Current Stock Balance</label>
+      <textarea placeholder="Example: Lemonade 10 left, Strawberry Bobo 5 left..."></textarea>
+
+      <label>Refill / Incident Note</label>
+      <textarea placeholder="Write booth situation..."></textarea>
+
+      <button class="btn-green" onclick="alert('Booth update saved on this device. Google Sheet connection will be added in the next phase.')">Update Booth Status</button>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+}
+
+function showClosingSummary() {
+  document.getElementById("app").innerHTML = `
+    ${renderTopDashboard()}
+
+    <div class="box">
+      <h2>6. Closing Summary</h2>
+      <p class="small">End-of-event closing record before final sales analysis.</p>
+
+      <label>Total Cash</label>
+      <input type="number" min="0" value="0">
+
+      <label>Total QR</label>
+      <input type="number" min="0" value="0">
+
+      <label>Total Sold Cups</label>
+      <input type="number" min="0" value="0">
+
+      <label>Total Leftover</label>
+      <input type="number" min="0" value="0">
+
+      <label>Total Wastage</label>
+      <input type="number" min="0" value="0">
+
+      <label>Closing Note</label>
+      <textarea placeholder="Cash short, QR issue, leftover, wastage reason..."></textarea>
+
+      <button class="btn-secondary" onclick="alert('Closing summary saved on this device. Google Sheet connection will be added in the next phase.')">Save Closing Summary</button>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+}
+
+function renderTopDashboard() {
+  const today = new Date().toISOString().slice(0,10);
+  const todayEvents = eventHistory.filter(e => e.date === today);
+  const todayCups = todayEvents.reduce((sum, e) => sum + Number(e.grandTotalQty || 0), 0);
+  const totalEvents = eventHistory.length;
+  const totalWastage = wastageHistory.reduce((sum, w) => sum + Number(w.wastageQty || 0), 0);
+
+  return `
+    <div class="dashboard">
+      <div class="dash-card">
+        <h3>Today Events</h3>
+        <p>${todayEvents.length}</p>
+      </div>
+      <div class="dash-card">
+        <h3>Today Cups</h3>
+        <p>${todayCups}</p>
+      </div>
+      <div class="dash-card">
+        <h3>Total Reports</h3>
+        <p>${totalEvents}</p>
+      </div>
+      <div class="dash-card">
+        <h3>Total Wastage</h3>
+        <p>${totalWastage}</p>
+      </div>
+    </div>
+  `;
+}
+
+function showPackingForm() {
+  document.getElementById("app").innerHTML = `
+    ${renderPackingDashboard()}
+
+    <div class="box">
+      <h2>Step 1: Packing Info</h2>
+
+      <label>Date</label>
+      <input type="date" id="date">
+
+      <label>Event Name</label>
+      <input type="text" id="eventName" placeholder="Follow event banner name">
+
+      <label>Outlet</label>
+      <select id="outletSelect">
+        ${outlets.map(o => `<option ${o === currentStaff.outlet ? "selected" : ""}>${o}</option>`).join("")}
+      </select>
+
+      <label>Location</label>
+      <select id="locationSelect" onchange="toggleOtherLocation()">
+        <option>UniMAP Unicity Padang Besar</option>
+        <option>UniMAP Wang Ulu</option>
+        <option>UniMAP PF 1</option>
+        <option>Politeknik Pauh</option>
+        <option>UiTM Arau</option>
+        <option>Other Location</option>
+      </select>
+
+      <div id="otherLocationBox" style="display:none;">
+        <label>Other Location</label>
+        <input type="text" id="otherLocation" placeholder="Write event location">
+      </div>
+
+      <label>Checked By</label>
+      <input type="text" id="checkedBy" value="${currentStaff.name}" placeholder="Staff name">
+
+      <h2 style="margin-top:24px;">Step 2: Boxes</h2>
+      <p class="small">L Cup Max 39 • M Cup Max 40 • Sundae Cup Max 56</p>
+
+      <div id="boxesArea"></div>
+      <div id="capacityWarningArea"></div>
+
+      <button type="button" class="btn-secondary" onclick="addBox()">+ Add Box</button>
+      <button type="button" class="btn-primary" onclick="generateAllLabels()">Generate Preview</button>
+      <button type="button" class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+
+  document.getElementById("date").valueAsDate = new Date();
+  renderBoxes();
+  updatePackingDashboard();
+}
+
+function renderPackingDashboard() {
+  return `
+    <div class="dashboard">
+      <div class="dash-card">
+        <h3>Total Boxes</h3>
+        <p id="dashBoxes">0</p>
+      </div>
+      <div class="dash-card">
+        <h3>Total Cups</h3>
+        <p id="dashCups">0</p>
+      </div>
+      <div class="dash-card">
+        <h3>Top Product</h3>
+        <p id="dashTop" style="font-size:16px;">-</p>
+      </div>
+      <div class="dash-card">
+        <h3>Capacity</h3>
+        <p id="dashStatus" style="font-size:16px;">OK</p>
+      </div>
+    </div>
+  `;
+}
+
+function toggleOtherLocation() {
+  const value = document.getElementById("locationSelect").value;
+  document.getElementById("otherLocationBox").style.display = value === "Other Location" ? "block" : "none";
+}
+
+function renderBoxes() {
+  let html = "";
+
+  boxes.forEach((box, boxIndex) => {
+    html += `
+      <div class="box-card">
+        <h3>${box.boxNo}</h3>
+
+        <div class="grid">
+          <div>
+            <label>Box No</label>
+            <input type="text" value="${box.boxNo}" oninput="boxes[${boxIndex}].boxNo=this.value; updatePackingDashboard(); renderCapacityWarnings();">
+          </div>
+
+          <div>
+            <label>Box Type</label>
+            <select onchange="boxes[${boxIndex}].boxType=this.value; updatePackingDashboard(); renderCapacityWarnings();">
+              ${boxTypeOptions(box.boxType)}
+            </select>
+          </div>
+        </div>
+
+        <h3 style="margin-top:18px;">Items</h3>
+        <div>${renderItems(boxIndex)}</div>
+
+        <button type="button" class="btn-secondary" onclick="addItem(${boxIndex})">+ Add Item</button>
+        <button type="button" class="btn-grey" onclick="removeBox(${boxIndex})">Remove This Box</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("boxesArea").innerHTML = html;
+  renderCapacityWarnings();
+  updatePackingDashboard();
+}
+
+function boxTypeOptions(selected) {
+  const types = ["L Cup Box", "M Cup Box", "U Cup Sundae Box", "Mixed Box", "Accessories Box"];
+  return types.map(t => `<option value="${t}" ${t === selected ? "selected" : ""}>${t}</option>`).join("");
+}
+
+function productOptions(selected) {
+  return products.map(p => `<option value="${p}" ${p === selected ? "selected" : ""}>${p}</option>`).join("");
+}
+
+function renderItems(boxIndex) {
+  let html = "";
+
+  boxes[boxIndex].items.forEach((item, itemIndex) => {
+    html += `
+      <div class="item-row">
+        <label>Product</label>
+        <select onchange="boxes[${boxIndex}].items[${itemIndex}].product=this.value; updatePackingDashboard();">
+          ${productOptions(item.product)}
+        </select>
+
+        <label>Qty</label>
+        <input type="number" value="${item.qty}" min="0"
+          oninput="boxes[${boxIndex}].items[${itemIndex}].qty=Number(this.value || 0); updatePackingDashboard(); renderCapacityWarnings();">
+
+        <button type="button" class="btn-secondary" onclick="removeItem(${boxIndex}, ${itemIndex})">Remove Item</button>
+      </div>
+    `;
+  });
+
+  return html;
+}
+
+function addBox() {
+  boxes.push({ boxNo: "Box " + (boxes.length + 1), boxType: "Mixed Box", items: [{ product: "Lemonade", qty: 0 }] });
+  renderBoxes();
+}
+
+function removeBox(boxIndex) {
+  if (boxes.length === 1) {
+    alert("At least 1 box is required.");
+    return;
+  }
+  boxes.splice(boxIndex, 1);
+  renderBoxes();
+}
+
+function addItem(boxIndex) {
+  boxes[boxIndex].items.push({ product: "Lemonade", qty: 0 });
+  renderBoxes();
+}
+
+function removeItem(boxIndex, itemIndex) {
+  if (boxes[boxIndex].items.length === 1) {
+    alert("At least 1 item is required.");
+    return;
+  }
+  boxes[boxIndex].items.splice(itemIndex, 1);
+  renderBoxes();
+}
+
+function getLocation() {
+  const selected = document.getElementById("locationSelect").value;
+  return selected === "Other Location" ? document.getElementById("otherLocation").value.trim() : selected;
+}
+
+function getCapacity(boxType) {
+  if (boxType === "L Cup Box") return 39;
+  if (boxType === "M Cup Box") return 40;
+  if (boxType === "U Cup Sundae Box") return 56;
+  return null;
+}
+
+function getTotalQty(box) {
+  return box.items.reduce((sum, item) => sum + Number(item.qty || 0), 0);
+}
+
+function getGrandTotalQty() {
+  return boxes.reduce((sum, box) => sum + getTotalQty(box), 0);
+}
+
+function getCapacityWarnings() {
+  let warnings = [];
+  boxes.forEach(box => {
+    const max = getCapacity(box.boxType);
+    const total = getTotalQty(box);
+    if (max && total > max) warnings.push(`${box.boxNo} exceeded ${box.boxType} limit by ${total - max} cups. Max: ${max}, Current: ${total}`);
+  });
+  return warnings;
+}
+
+function renderCapacityWarnings() {
+  const area = document.getElementById("capacityWarningArea");
+  if (!area) return;
+  const warnings = getCapacityWarnings();
+  area.innerHTML = warnings.length === 0 ? `<div class="ok">✅ Capacity OK. No box exceeded limit.</div>` : warnings.map(w => `<div class="warning">⚠ ${w}</div>`).join("");
+}
+
+function getTopProduct() {
+  const map = {};
+  boxes.forEach(box => {
+    box.items.forEach(item => {
+      const qty = Number(item.qty || 0);
+      if (qty > 0) map[item.product] = (map[item.product] || 0) + qty;
+    });
+  });
+
+  let topName = "-";
+  let topQty = 0;
+  Object.keys(map).forEach(product => {
+    if (map[product] > topQty) {
+      topName = product;
+      topQty = map[product];
+    }
+  });
+  return topQty > 0 ? `${topName} (${topQty})` : "-";
+}
+
+function updatePackingDashboard() {
+  const dashBoxes = document.getElementById("dashBoxes");
+  const dashCups = document.getElementById("dashCups");
+  const dashTop = document.getElementById("dashTop");
+  const dashStatus = document.getElementById("dashStatus");
+  if (!dashBoxes || !dashCups || !dashTop || !dashStatus) return;
+
+  dashBoxes.innerHTML = boxes.length;
+  dashCups.innerHTML = getGrandTotalQty();
+  dashTop.innerHTML = getTopProduct();
+
+  const warnings = getCapacityWarnings();
+  dashStatus.innerHTML = warnings.length ? "Warning" : "OK";
+  dashStatus.style.color = warnings.length ? "#d60000" : "#118c37";
+}
+
+function validateData() {
+  const eventName = document.getElementById("eventName").value.trim();
+  const checkedBy = document.getElementById("checkedBy").value.trim();
+  const location = getLocation();
+
+  if (!eventName || !checkedBy || !location) {
+    alert("Please fill Event Name, Location and Checked By.");
+    return false;
+  }
+
+  for (let box of boxes) {
+    if (!box.boxNo || getTotalQty(box) <= 0) {
+      alert("Every box must have Box No and at least 1 item quantity.");
+      return false;
+    }
+  }
+
+  const warnings = getCapacityWarnings();
+  if (warnings.length > 0) {
+    const confirmContinue = confirm("Some boxes exceeded capacity. Continue anyway?");
+    if (!confirmContinue) return false;
+  }
+
+  return true;
+}
+
+function generateLabelText() {
+  const date = savedPackingInfo.date || document.getElementById("date").value;
+  const eventName = savedPackingInfo.eventName || document.getElementById("eventName").value;
+  const location = savedPackingInfo.location || getLocation();
+  const outlet = savedPackingInfo.outlet || document.getElementById("outletSelect").value;
+  const checkedBy = savedPackingInfo.checkedBy || document.getElementById("checkedBy").value;
+
+  let text = `Packing Report
+`;
+  text += `Date: ${date}
+`;
+  text += `Event: ${eventName}
+`;
+  text += `Outlet: ${outlet}
+`;
+  text += `Location: ${location}
+`;
+  text += `Checked By: ${checkedBy}
+`;
+  text += `Login Staff: ${currentStaff.name}
+`;
+  text += `Total Boxes: ${boxes.length}
+`;
+  text += `Total Cups: ${getGrandTotalQty()}
+
+`;
+
+  boxes.forEach((box, boxIndex) => {
+    const max = getCapacity(box.boxType);
+    const total = getTotalQty(box);
+    text += `${box.boxNo} / ${box.boxType}
+`;
+    text += `Total Qty: ${total}`;
+    if (max) text += ` / Max ${max}`;
+    text += `
+`;
+
+    box.items.filter(item => Number(item.qty) > 0).forEach((item, itemIndex) => {
+      text += `${itemIndex + 1}. ${item.product} (${item.qty})
+`;
+    });
+
+    if (boxIndex !== boxes.length - 1) text += `
+`;
+  });
+
+  return text;
+}
+
+function generateHQFormatText() {
+  const eventName = savedPackingInfo.eventName || document.getElementById("eventName").value;
+  const date = savedPackingInfo.date || document.getElementById("date").value;
+  const location = savedPackingInfo.location || getLocation();
+  const outlet = savedPackingInfo.outlet || document.getElementById("outletSelect").value;
+
+  let text = `Order for ${eventName} (${date})
+`;
+  text += `${outlet}
+`;
+  text += `Location: ${location}
+
+`;
+
+  boxes.forEach(box => {
+    text += `1 Kotak Besar - ${box.boxNo} (${box.boxType})
+`;
+    box.items.filter(item => Number(item.qty) > 0).forEach((item, index) => {
+      text += `${index + 1}. ${item.product} (${item.qty})
+`;
+    });
+    text += `
+`;
+  });
+
+  text += `Total Boxes: ${boxes.length}
+`;
+  text += `Total Cups: ${getGrandTotalQty()}
+`;
+  return text;
+}
+
+function generateAllLabels() {
+  if (!validateData()) return;
+
+  savedPackingInfo = {
+    id: "EVT-" + Date.now(),
+    date: document.getElementById("date").value,
+    eventName: document.getElementById("eventName").value.trim(),
+    outlet: document.getElementById("outletSelect").value,
+    location: getLocation(),
+    checkedBy: document.getElementById("checkedBy").value.trim()
+  };
+
+  const label = generateLabelText();
+  const hq = generateHQFormatText();
+  const warnings = getCapacityWarnings();
+
+  document.getElementById("app").innerHTML = `
+    ${renderPackingDashboard()}
+
+    <div class="box">
+      <h2>Step 3: Box Label Preview</h2>
+      ${warnings.length ? warnings.map(w => `<div class="warning">⚠ ${w}</div>`).join("") : `<div class="ok">✅ Capacity OK. No box exceeded limit.</div>`}
+
+      <h3>Packing Report</h3>
+      <div class="preview">${label}</div>
+
+      <h3>HQ WhatsApp Format</h3>
+      <div class="preview hq-preview">${hq}</div>
+
+      <div class="action-buttons">
+        <button type="button" id="saveBtn" class="btn-green">Save All Boxes to Google Sheet</button>
+        <button type="button" id="copyPackingBtn" class="btn-primary">Copy Packing Report</button>
+        <button type="button" id="copyHQBtn" class="btn-blue">Copy HQ Format</button>
+        <button type="button" id="pdfBtn" class="btn-orange">Export PDF</button>
+        <button type="button" id="backBtn" class="btn-secondary">Back / Edit</button>
+        <button type="button" class="btn-grey" onclick="showHome()">Home</button>
+        <div id="statusMsg"></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("saveBtn").addEventListener("click", saveAllBoxes);
+  document.getElementById("copyPackingBtn").addEventListener("click", () => copyText(generateLabelText(), "✅ Packing Report copied!"));
+  document.getElementById("copyHQBtn").addEventListener("click", () => copyText(generateHQFormatText(), "✅ HQ WhatsApp Format copied!"));
+  document.getElementById("pdfBtn").addEventListener("click", exportPDF);
+  document.getElementById("backBtn").addEventListener("click", showPackingForm);
+
+  updatePackingDashboard();
+}
+
+function showStatus(message) {
+  const status = document.getElementById("statusMsg");
+  if (!status) return;
+  status.style.display = "block";
+  status.innerHTML = message;
+}
+
+function copyText(text, successMessage) {
+  const fallbackCopy = () => {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  };
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        showStatus(successMessage);
+        alert(successMessage);
+      }).catch(() => {
+        fallbackCopy();
+        showStatus(successMessage);
+        alert(successMessage);
+      });
+    } else {
+      fallbackCopy();
+      showStatus(successMessage);
+      alert(successMessage);
+    }
+  } catch (err) {
+    fallbackCopy();
+    showStatus(successMessage);
+    alert(successMessage);
+  }
+}
+
+
+async function saveToGoogleSheet(tab, payload) {
+  const res = await fetch(WEB_APP_URL, {
+    method: "POST",
+    body: JSON.stringify({ tab, payload })
+  });
+
+  const result = await res.json();
+  if (!result.success) {
+    throw new Error(result.message || "Google Sheet save failed");
+  }
+  return result;
+}
+
+async function saveAllBoxes() {
+  const saveBtn = document.getElementById("saveBtn");
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = "Saving... Please wait";
+  showStatus("⏳ Saving to Google Sheet...");
+
+  try {
+    const historyRecord = {
+      ...savedPackingInfo,
+      version: "MPOI V1",
+      staffName: currentStaff.name,
+      staffRole: currentStaff.role,
+      totalBoxes: boxes.length,
+      grandTotalQty: getGrandTotalQty(),
+      topProduct: getTopProduct(),
+      capacityStatus: getCapacityWarnings().length ? "Warning" : "OK",
+      createdAt: new Date().toLocaleString(),
+      boxes: JSON.parse(JSON.stringify(boxes))
+    };
+
+    eventHistory.unshift(historyRecord);
+    saveLocalData();
+
+    for (let box of boxes) {
+      const boxPayload = {
+        PackingID: savedPackingInfo.id,
+        Date: savedPackingInfo.date,
+        EventName: savedPackingInfo.eventName,
+        BoothName: savedPackingInfo.location,
+        "Booth Category": "Event Booth",
+        BoxNo: box.boxNo,
+        BoxType: box.boxType,
+        TotalQty: getTotalQty(box),
+        PackedBy: currentStaff.name,
+        CheckedBy: savedPackingInfo.checkedBy,
+        Status: getCapacityWarnings().length ? "Warning" : "OK"
+      };
+
+      await saveToGoogleSheet("PackingBox", boxPayload);
+
+      for (let item of box.items.filter(item => Number(item.qty) > 0)) {
+        const detailPayload = {
+          PackingID: savedPackingInfo.id,
+          BoxNo: box.boxNo,
+          Product: item.product,
+          SourceOutlet: savedPackingInfo.outlet,
+          ExistingQty: 0,
+          NewQty: Number(item.qty || 0),
+          FinalQty: Number(item.qty || 0),
+          Status: "Packed",
+          PackedBy: currentStaff.name
+        };
+
+        await saveToGoogleSheet("PackingDetail", detailPayload);
+      }
+    }
+
+    showStatus("✅ Saved to Google Sheet and Event History!");
+    alert("✅ Saved to Google Sheet and Event History!");
+
+  } catch (err) {
+    console.log(err);
+    showStatus("❌ Failed to save: " + err.message);
+    alert("❌ Failed to save: " + err.message);
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = "Save All Boxes to Google Sheet";
+  }
+}
+
+function exportPDF() {
+  const content = `
+    <html>
+      <head>
+        <title>MPOI Packing Report PDF</title>
+        <style>
+          body { font-family: Arial; padding: 24px; }
+          h1 { color: #d60000; }
+          pre { white-space: pre-wrap; font-size: 14px; line-height: 1.5; }
+        </style>
+      </head>
+      <body>
+        <h1>MPOI Packing Report</h1>
+        <pre>${generateLabelText()}</pre>
+        <h2>HQ WhatsApp Format</h2>
+        <pre>${generateHQFormatText()}</pre>
+      </body>
+    </html>
+  `;
+
+  const win = window.open("", "_blank");
+  win.document.write(content);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 500);
+}
+
+function showHistory() {
+  let html = eventHistory.map((e, index) => `
+    <div class="list-card">
+      <b>${e.eventName}</b><br>
+      Date: ${e.date}<br>
+      Outlet: ${e.outlet}<br>
+      Location: ${e.location}<br>
+      Total Boxes: ${e.totalBoxes} | Total Cups: ${e.grandTotalQty}<br>
+      Staff: ${e.staffName}<br>
+      Status: ${e.capacityStatus}<br>
+      <button class="btn-blue" onclick="copyHistoryReport(${index})">Copy Report</button>
+    </div>
+  `).join("");
+
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>Event History</h2>
+      <p class="small">Saved locally on this device and also sent to Google Sheet when Save is clicked.</p>
+      ${html || `<div class="notice">No event history yet.</div>`}
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+}
+
+function copyHistoryReport(index) {
+  const e = eventHistory[index];
+  let text = `Event History Report
+`;
+  text += `Date: ${e.date}
+Event: ${e.eventName}
+Outlet: ${e.outlet}
+Location: ${e.location}
+Staff: ${e.staffName}
+Total Boxes: ${e.totalBoxes}
+Total Cups: ${e.grandTotalQty}
+
+`;
+  e.boxes.forEach(box => {
+    text += `${box.boxNo} / ${box.boxType}
+`;
+    box.items.filter(i => Number(i.qty) > 0).forEach((i, idx) => text += `${idx + 1}. ${i.product} (${i.qty})
+`);
+    text += `
+`;
+  });
+  copyText(text, "✅ History report copied!");
+}
+
+function showWastageForm() {
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>Wastage Record</h2>
+
+      <label>Date</label>
+      <input type="date" id="wDate">
+
+      <label>Event Name</label>
+      <input type="text" id="wEvent" placeholder="Event name">
+
+      <label>Outlet</label>
+      <select id="wOutlet">${outlets.map(o => `<option ${o === currentStaff.outlet ? "selected" : ""}>${o}</option>`).join("")}</select>
+
+      <label>Product</label>
+      <select id="wProduct">${products.map(p => `<option>${p}</option>`).join("")}</select>
+
+      <div class="grid">
+        <div>
+          <label>Sent Qty</label>
+          <input type="number" id="wSent" min="0" value="0">
+        </div>
+        <div>
+          <label>Sold Qty</label>
+          <input type="number" id="wSold" min="0" value="0">
+        </div>
+        <div>
+          <label>Returned Qty</label>
+          <input type="number" id="wReturned" min="0" value="0">
+        </div>
+        <div>
+          <label>Wastage Qty</label>
+          <input type="number" id="wQty" min="0" value="0">
+        </div>
+      </div>
+
+      <label>Reason</label>
+      <select id="wReason">
+        <option>Unsold</option>
+        <option>Melted</option>
+        <option>Broken Cup</option>
+        <option>Customer Return</option>
+        <option>Staff Mistake</option>
+        <option>Others</option>
+      </select>
+
+      <label>Note</label>
+      <textarea id="wNote" placeholder="Write extra note if needed"></textarea>
+
+      <button class="btn-orange" onclick="saveWastage()">Save Wastage Record</button>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+  document.getElementById("wDate").valueAsDate = new Date();
+}
+
+function saveWastage() {
+  const record = {
+    id: "WAS-" + Date.now(),
+    date: document.getElementById("wDate").value,
+    eventName: document.getElementById("wEvent").value.trim(),
+    outlet: document.getElementById("wOutlet").value,
+    product: document.getElementById("wProduct").value,
+    sentQty: Number(document.getElementById("wSent").value || 0),
+    soldQty: Number(document.getElementById("wSold").value || 0),
+    returnedQty: Number(document.getElementById("wReturned").value || 0),
+    wastageQty: Number(document.getElementById("wQty").value || 0),
+    reason: document.getElementById("wReason").value,
+    note: document.getElementById("wNote").value.trim(),
+    staff: currentStaff.name,
+    createdAt: new Date().toLocaleString()
+  };
+
+  record.missingQty = record.sentQty - record.soldQty - record.returnedQty - record.wastageQty;
+
+  if (!record.eventName) {
+    alert("Please fill Event Name.");
+    return;
+  }
+
+  wastageHistory.unshift(record);
+  saveLocalData();
+  alert("✅ Wastage record saved!");
+  showLiveDashboard();
+}
+
+function showRunnerForm() {
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>Runner Delivery Tracking</h2>
+
+      <label>Date</label>
+      <input type="date" id="rDate">
+
+      <label>Runner Name</label>
+      <input type="text" id="rName" value="${currentStaff.name}">
+
+      <label>Car Plate</label>
+      <input type="text" id="rCar" placeholder="Example: RAG 1234">
+
+      <label>Pickup Outlet</label>
+      <select id="rPickup">${outlets.map(o => `<option ${o === currentStaff.outlet ? "selected" : ""}>${o}</option>`).join("")}</select>
+
+      <label>Drop Location</label>
+      <input type="text" id="rDrop" placeholder="Event / booth location">
+
+      <label>Box Count</label>
+      <input type="number" id="rBoxCount" min="0" value="0">
+
+      <label>Status</label>
+      <select id="rStatus">
+        <option>Pending</option>
+        <option>Picked Up</option>
+        <option>On The Way</option>
+        <option>Delivered</option>
+        <option>Returned</option>
+      </select>
+
+      <label>Note</label>
+      <textarea id="rNote" placeholder="Optional note"></textarea>
+
+      <button class="btn-purple" onclick="saveRunner()">Save Runner Record</button>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+  document.getElementById("rDate").valueAsDate = new Date();
+}
+
+function saveRunner() {
+  const record = {
+    id: "RUN-" + Date.now(),
+    date: document.getElementById("rDate").value,
+    runnerName: document.getElementById("rName").value.trim(),
+    carPlate: document.getElementById("rCar").value.trim(),
+    pickupOutlet: document.getElementById("rPickup").value,
+    dropLocation: document.getElementById("rDrop").value.trim(),
+    boxCount: Number(document.getElementById("rBoxCount").value || 0),
+    status: document.getElementById("rStatus").value,
+    note: document.getElementById("rNote").value.trim(),
+    createdAt: new Date().toLocaleString()
+  };
+
+  if (!record.runnerName || !record.dropLocation) {
+    alert("Please fill Runner Name and Drop Location.");
+    return;
+  }
+
+  runnerHistory.unshift(record);
+  saveLocalData();
+  alert("✅ Runner record saved!");
+  showLiveDashboard();
+}
+
+function showAISuggestion() {
+  document.getElementById("app").innerHTML = `
+    <div class="box">
+      <h2>AI Suggested Packing</h2>
+      <p class="small">Rule-based suggestion. It uses audience, event type, weather and duration.</p>
+
+      <label>Target Audience</label>
+      <input type="number" id="aiAudience" min="0" value="500">
+
+      <label>Event Type</label>
+      <select id="aiEventType">
+        <option>University</option>
+        <option>School</option>
+        <option>Marathon</option>
+        <option>Night Market</option>
+        <option>Corporate</option>
+      </select>
+
+      <label>Weather</label>
+      <select id="aiWeather">
+        <option>Hot</option>
+        <option>Normal</option>
+        <option>Rainy</option>
+      </select>
+
+      <label>Duration</label>
+      <select id="aiDuration">
+        <option value="2">2 hours</option>
+        <option value="4" selected>4 hours</option>
+        <option value="6">6 hours</option>
+        <option value="8">8 hours</option>
+      </select>
+
+      <button class="btn-green" onclick="generateAISuggestion()">Generate Suggestion</button>
+      <div id="aiResult"></div>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+}
+
+function generateAISuggestion() {
+  const audience = Number(document.getElementById("aiAudience").value || 0);
+  const eventType = document.getElementById("aiEventType").value;
+  const weather = document.getElementById("aiWeather").value;
+  const duration = Number(document.getElementById("aiDuration").value || 4);
+
+  let conversion = 0.12;
+  if (eventType === "University") conversion = 0.16;
+  if (eventType === "School") conversion = 0.10;
+  if (eventType === "Marathon") conversion = 0.18;
+  if (eventType === "Night Market") conversion = 0.14;
+  if (eventType === "Corporate") conversion = 0.08;
+
+  if (weather === "Hot") conversion += 0.04;
+  if (weather === "Rainy") conversion -= 0.03;
+  if (duration >= 6) conversion += 0.03;
+
+  const total = Math.max(20, Math.round(audience * conversion));
+
+  let lemonade = Math.round(total * 0.28);
+  let peach = Math.round(total * 0.18);
+  let bobo = Math.round(total * 0.16);
+  let milkTea = Math.round(total * 0.16);
+  let sundae = Math.round(total * 0.12);
+  let others = total - lemonade - peach - bobo - milkTea - sundae;
+
+  if (weather === "Hot") {
+    lemonade += Math.round(total * 0.08);
+    others -= Math.round(total * 0.08);
+  }
+
+  const estimatedBoxes = Math.ceil(total / 40);
+
+  const text = `
+Suggested Total: ${total} cups
+
+Lemonade: ${lemonade}
+Peach Jasmine Tea: ${peach}
+Strawberry Bobo: ${bobo}
+Milk Tea L: ${milkTea}
+Original Sundae: ${sundae}
+Others: ${others}
+
+Suggested Boxes: ${estimatedBoxes}
+
+Reason:
+- Event Type: ${eventType}
+- Weather: ${weather}
+- Duration: ${duration} hours
+- Estimated Conversion: ${Math.round(conversion * 100)}%
+  `;
+
+  document.getElementById("aiResult").innerHTML = `
+    <div class="preview">${text}</div>
+    <button class="btn-blue" onclick="copyText(document.getElementById('aiResultText').value, '✅ AI Suggestion copied!')">Copy Suggestion</button>
+    <textarea id="aiResultText" style="display:none;">${text}</textarea>
+  `;
+}
+
+function showLiveDashboard() {
+  const totalCups = eventHistory.reduce((sum, e) => sum + Number(e.grandTotalQty || 0), 0);
+  const totalBoxes = eventHistory.reduce((sum, e) => sum + Number(e.totalBoxes || 0), 0);
+  const totalWastage = wastageHistory.reduce((sum, w) => sum + Number(w.wastageQty || 0), 0);
+  const totalRunner = runnerHistory.length;
+
+  const recentEvents = eventHistory.slice(0, 5).map(e => `
+    <div class="list-card">
+      <b>${e.eventName}</b><br>
+      ${e.date} • ${e.outlet}<br>
+      ${e.totalBoxes} boxes • ${e.grandTotalQty} cups
+    </div>
+  `).join("");
+
+  const recentWastage = wastageHistory.slice(0, 5).map(w => `
+    <div class="list-card">
+      <b>${w.product}</b> - ${w.wastageQty} wastage<br>
+      Event: ${w.eventName}<br>
+      Missing Qty: ${w.missingQty}<br>
+      Reason: ${w.reason}
+    </div>
+  `).join("");
+
+  const recentRunner = runnerHistory.slice(0, 5).map(r => `
+    <div class="list-card">
+      <b>${r.runnerName}</b> - ${r.status}<br>
+      ${r.pickupOutlet} → ${r.dropLocation}<br>
+      Boxes: ${r.boxCount}
+    </div>
+  `).join("");
+
+  document.getElementById("app").innerHTML = `
+    <div class="dashboard">
+      <div class="dash-card"><h3>Total Cups</h3><p>${totalCups}</p></div>
+      <div class="dash-card"><h3>Total Boxes</h3><p>${totalBoxes}</p></div>
+      <div class="dash-card"><h3>Wastage</h3><p>${totalWastage}</p></div>
+      <div class="dash-card"><h3>Runner Records</h3><p>${totalRunner}</p></div>
+    </div>
+
+    <div class="box">
+      <h2>Live Dashboard</h2>
+      <h3>Recent Events</h3>
+      ${recentEvents || `<div class="notice">No event saved yet.</div>`}
+
+      <h3>Recent Wastage</h3>
+      ${recentWastage || `<div class="notice">No wastage record yet.</div>`}
+
+      <h3>Recent Runner Tracking</h3>
+      ${recentRunner || `<div class="notice">No runner record yet.</div>`}
+
+      <button class="btn-secondary" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+}
+
+if (currentStaff) {
+  showHome();
+} else {
+  showLogin();
+}
+</script>
+
+</body>
+</html>
