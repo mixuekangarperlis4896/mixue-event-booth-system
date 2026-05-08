@@ -96,9 +96,99 @@ function logout() {
   showLogin();
 }
 
+function canAccess(role, moduleName) {
+  const r = (role || "").replace(/\s+/g, "").toLowerCase();
+
+  if (r === "systemcontroller" || r === "admin") return true;
+
+  if (r === "boss") {
+    return moduleName === "dashboard";
+  }
+
+  if (r === "runner") {
+    return moduleName === "runner";
+  }
+
+  if (r === "boothcrew") {
+    return moduleName === "packing" || moduleName === "closing";
+  }
+
+  if (r === "outletcrew") {
+    return moduleName === "packing" || moduleName === "closing";
+  }
+
+  if (r === "outletstaff" || r === "partimerstaff") {
+    return moduleName === "packing" || moduleName === "closing";
+  }
+
+  return moduleName === "packing";
+}
+
+function moduleCard(moduleName, title, description, btnClass, btnText, link) {
+  return `
+    <div class="nav-card">
+      <b>${title}</b>
+      <p>${description}</p>
+      <button class="${btnClass}" onclick="location.href='${link}'">${btnText}</button>
+    </div>
+  `;
+}
+
 function showHome() {
   const staff = getStaff();
   if (!staff) return showLogin();
+
+  const role = staff.role;
+
+  let cards = "";
+
+  if (canAccess(role, "packing")) {
+    cards += moduleCard(
+      "packing",
+      "1. Planning / Packing",
+      "Create event stock, boxes and HQ WhatsApp format.",
+      "btn-primary",
+      "Open Packing",
+      "packing-final.html"
+    );
+  }
+
+  if (canAccess(role, "runner")) {
+    cards += moduleCard(
+      "runner",
+      "2. Runner",
+      "Update pickup, on route, delivered and returned.",
+      "btn-purple",
+      "Open Runner",
+      "runner-final.html"
+    );
+  }
+
+  if (canAccess(role, "closing")) {
+    cards += moduleCard(
+      "closing",
+      "3. Closing",
+      "Cash, QR, sold, leftover, wastage and closing summary.",
+      "btn-green",
+      "Open Closing",
+      "closing-final.html"
+    );
+  }
+
+  if (canAccess(role, "dashboard")) {
+    cards += moduleCard(
+      "dashboard",
+      "4. Admin / Boss Dashboard",
+      "Overview for boss, admin and system controller.",
+      "btn-blue",
+      "Open Dashboard",
+      "admin-final.html"
+    );
+  }
+
+  if (!cards) {
+    cards = `<div class="warning">No module assigned for today. Please contact Admin / System Controller.</div>`;
+  }
 
   $("app").innerHTML = `
     ${nav()}
@@ -118,34 +208,12 @@ function showHome() {
 
     <div class="box">
       <h2>MPOC Event Flow</h2>
+      <div class="nav-grid">${cards}</div>
 
-      <div class="nav-grid">
-        <div class="nav-card">
-          <b>1. Planning / Packing</b>
-          <p>Create event stock, boxes and HQ WhatsApp format.</p>
-          <button class="btn-primary" onclick="location.href='packing-final.html'">Open Packing</button>
-        </div>
-
-        <div class="nav-card">
-          <b>2. Runner</b>
-          <p>Runner update pickup, on route, delivered and returned.</p>
-          <button class="btn-purple" onclick="location.href='runner-final.html'">Open Runner</button>
-        </div>
-
-        <div class="nav-card">
-          <b>3. Closing</b>
-          <p>Cash, QR, sold, leftover, wastage and closing summary.</p>
-          <button class="btn-green" onclick="location.href='closing-final.html'">Open Closing</button>
-        </div>
-
-        <div class="nav-card">
-          <b>4. Admin / Boss</b>
-          <p>Simple overview for boss and system controller.</p>
-          <button class="btn-blue" onclick="location.href='admin-final.html'">Open Dashboard</button>
-        </div>
+      <div class="notice">
+        Role Based UI is active.<br>
+        TodayRole will override FixedRole when assigned in StaffMaster.
       </div>
-
-      <div class="notice">Login role is now controlled by StaffMaster.</div>
     </div>
   `;
 }
