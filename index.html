@@ -22,28 +22,51 @@
 <script src="js/api.js"></script>
 
 <script>
+let LIVE_STAFF = [];
+
+function cleanText(value) {
+  return String(value || "").trim();
+}
+
+function normalizeRole(role) {
+  return cleanText(role).replace(/\s+/g, "").toLowerCase();
+}
+
 function visibleRole(staff) {
   if (!staff) return "-";
-  return staff.TodayRole || staff.FixedRole || "OutletStaff";
+  return cleanText(staff.TodayRole) || cleanText(staff.FixedRole) || "OutletStaff";
 }
 
-  let LIVE_STAFF = [];
-
-async function loadStaffMaster(){
-  try{
-    const res = await fetch("https://script.google.com/macros/s/AKfycby0Y54F6Xvv99ASdqctlybM4foiIgQWmNZoc2PBZMtvAew4oVdYWkr1vx2LVgpAcTo/exec");
+async function loadStaffMaster() {
+  try {
+    const res = await fetch("https://script.google.com/macros/s/AKfycbwsuHLN6wk7iqQrdIU6c4yfLaj3FJw2LLtTseNB5xA8EKIrgcVBULlqrElkyZOy6JxI/exec");
     LIVE_STAFF = await res.json();
+
+    if (!Array.isArray(LIVE_STAFF)) {
+      throw new Error("StaffMaster response is not an array.");
+    }
+
     showLogin();
-  }catch(err){
-    alert("Failed to load StaffMaster");
+
+  } catch (err) {
     console.log(err);
+    $("app").innerHTML = `
+      <div class="box">
+        <h2>StaffMaster Load Failed</h2>
+        <div class="warning">
+          Failed to load StaffMaster from Google Sheet.<br>
+          Please check Apps Script deployment and StaffMaster header.
+        </div>
+        <button class="btn-primary" onclick="loadStaffMaster()">Retry</button>
+      </div>
+    `;
   }
 }
-  
+
 function showLogin() {
   const activeStaff = LIVE_STAFF.filter(s =>
-  s.Name && String(s.Status || "Active").trim() === "Active"
-);
+    cleanText(s.Name) && cleanText(s.Status || "Active").toLowerCase() === "active"
+  );
 
   $("app").innerHTML = `
     <div class="box">
@@ -53,7 +76,7 @@ function showLogin() {
       <label>Staff Name</label>
       <select id="staffSelect" onchange="updateStaffPreview()">
         <option value="">-- Select Staff Name --</option>
-        ${activeStaff.map(s => `<option value="${s.StaffID}">${s.Name}</option>`).join("")}
+        ${activeStaff.map(s => `<option value="${cleanText(s.StaffID)}">${cleanText(s.Name)}</option>`).join("")}
       </select>
 
       <label>Outlet</label>
@@ -76,33 +99,39 @@ function showLogin() {
 }
 
 function updateStaffPreview() {
-  const staffId = $("staffSelect").value;
-  const staff = MPOC.staffMaster.find(s => s.StaffID === staffId);
-  $("outletPreview").value = staff ? staff.Outlet : "-";
+  const staffId = cleanText($("staffSelect").value);
+  const staff = LIVE_STAFF.find(s => cleanText(s.StaffID) === staffId);
+
+  $("outletPreview").value = staff ? cleanText(staff.Outlet) : "-";
   $("rolePreview").value = staff ? visibleRole(staff) : "-";
 }
 
 function login() {
-  const staffId = $("staffSelect").value;
-  const pin = $("pin").value.trim();
-  const staff = LIVE_STAFF.find(s => s.StaffID === staffId);
+  const staffId = cleanText($("staffSelect").value);
+  const pin = cleanText($("pin").value);
+  const staff = LIVE_STAFF.find(s => cleanText(s.StaffID) === staffId);
 
   if (!staff) return alert("Please select Staff Name.");
 
-if (String(staff.Status || "").trim().toLowerCase() !== "active") {
-  return alert("This staff account is not active.");
-}
+  if (cleanText(staff.Status || "Active").toLowerCase() !== "active") {
+    return alert("This staff account is not active.");
+  }
 
-if (!pin) return alert("Please enter PIN.");
-if (pin !== staff.PIN) return alert("Wrong PIN.");
+  if (!pin) return alert("Please enter PIN.");
+
+  const correctPin = cleanText(staff.PinStatus);
+
+  if (pin !== correctPin) {
+    return alert("Wrong PIN.");
+  }
 
   const loginData = {
-    staffId: staff.StaffID,
-    name: staff.Name,
-    outlet: staff.Outlet,
+    staffId: cleanText(staff.StaffID),
+    name: cleanText(staff.Name),
+    outlet: cleanText(staff.Outlet),
     role: visibleRole(staff),
-    fixedRole: staff.FixedRole,
-    todayRole: staff.TodayRole,
+    fixedRole: cleanText(staff.FixedRole),
+    todayRole: cleanText(staff.TodayRole),
     loginTime: new Date().toLocaleString()
   };
 
@@ -116,7 +145,7 @@ function logout() {
 }
 
 function canAccess(role, moduleName) {
-  const r = (role || "").replace(/\s+/g, "").toLowerCase();
+  const r = normalizeRole(role);
 
   if (r === "systemcontroller" || r === "admin") return true;
 
@@ -124,23 +153,28 @@ function canAccess(role, moduleName) {
     return moduleName === "dashboard";
   }
 
-  if (r === "runner") {
-    return moduleName === "runner";
+  const normalStaffRoles = [
+    "outletstaff",
+    "partimerstaff",
+    "outletcrew",
+    "boothcrew",
+    "runner",
+    "packingcrew"
+  ];
+
+  if (normalStaffRoles.includes(r)) {
+    return (
+      moduleName === "packing" ||
+      moduleName === "runner" ||
+      moduleName === "closing"
+    );
   }
 
-  if (r === "boothcrew") {
-    return moduleName === "packing" || moduleName === "closing";
-  }
-
-  if (r === "outletcrew") {
-    return moduleName === "packing" || moduleName === "closing";
-  }
-
-  if (r === "outletstaff" || r === "partimerstaff") {
-    return moduleName === "packing" || moduleName === "closing";
-  }
-
-  return moduleName === "packing";
+  return (
+    moduleName === "packing" ||
+    moduleName === "runner" ||
+    moduleName === "closing"
+  );
 }
 
 function moduleCard(moduleName, title, description, btnClass, btnText, link) {
@@ -158,7 +192,6 @@ function showHome() {
   if (!staff) return showLogin();
 
   const role = staff.role;
-
   let cards = "";
 
   if (canAccess(role, "packing")) {
@@ -206,7 +239,7 @@ function showHome() {
   }
 
   if (!cards) {
-    cards = `<div class="warning">No module assigned for today. Please contact Admin / System Controller.</div>`;
+    cards = `<div class="warning">No module assigned. Please contact Admin / System Controller.</div>`;
   }
 
   $("app").innerHTML = `
@@ -230,8 +263,8 @@ function showHome() {
       <div class="nav-grid">${cards}</div>
 
       <div class="notice">
-        Role Based UI is active.<br>
-        TodayRole will override FixedRole when assigned in StaffMaster.
+        Live StaffMaster is active.<br>
+        TodayRole is used as the main daily role, but normal staff can access Packing, Runner and Closing for real event operation.
       </div>
     </div>
   `;
