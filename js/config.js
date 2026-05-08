@@ -12,6 +12,6 @@ const MPOC = {
   booths: ["UniMAP Unicity Padang Besar","UniMAP Wang Ulu","UniMAP PF 1","Politeknik Pauh","UiTM Arau","Other Location"],
   boxTypes: ["L Cup Box","M Cup Box","U Cup Sundae Box","Mixed Box","Accessories Box"],
   pins: {
-    Staff:"1234", "Shop Leader":"1234", Runner:"1234", Admin:"1234", Boss:"1234", "System Controller":"970902"
+    Staff:"1234", "Shop Leader":"1234", Runner:"1234", Admin:"8888", Boss:"1234", "System Controller":"970902"
   }
 };
