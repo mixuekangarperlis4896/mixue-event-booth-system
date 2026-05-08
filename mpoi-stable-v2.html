@@ -1077,12 +1077,15 @@ async function saveAllBoxes() {
   const saveBtn = document.getElementById("saveBtn");
   saveBtn.disabled = true;
   saveBtn.innerHTML = "Saving... Please wait";
-  showStatus("⏳ Saving to Google Sheet...");
+  showStatus("⏳ Saving PackingBox + PackingDetail...");
 
   try {
+    const packingId = savedPackingInfo.id || ("PK-" + Date.now());
+
     const historyRecord = {
       ...savedPackingInfo,
-      version: "MPOI V1",
+      id: packingId,
+      version: "MPOI Stable V2",
       staffName: currentStaff.name,
       staffRole: currentStaff.role,
       totalBoxes: boxes.length,
@@ -1098,24 +1101,29 @@ async function saveAllBoxes() {
 
     for (let box of boxes) {
       const boxPayload = {
-        PackingID: savedPackingInfo.id,
+        PackingID: packingId,
         Date: savedPackingInfo.date,
         EventName: savedPackingInfo.eventName,
         BoothName: savedPackingInfo.location,
-        "Booth Category": "Event Booth",
+        BoothCategory: "Event Booth",
         BoxNo: box.boxNo,
         BoxType: box.boxType,
         TotalQty: getTotalQty(box),
+        PackingStatus: "Packed",
         PackedBy: currentStaff.name,
-        CheckedBy: savedPackingInfo.checkedBy,
-        Status: getCapacityWarnings().length ? "Warning" : "OK"
+        Outlet: savedPackingInfo.outlet,
+        CreatedAt: new Date()
       };
 
-      await saveToGoogleSheet("PackingBox", boxPayload);
+      const boxResult = await saveToGoogleSheet("PackingBox", boxPayload);
 
-      for (let item of box.items.filter(item => Number(item.qty) > 0)) {
+      if (!boxResult.success) {
+        throw new Error("PackingBox failed: " + boxResult.message);
+      }
+
+      for (let item of box.items.filter(i => Number(i.qty) > 0)) {
         const detailPayload = {
-          PackingID: savedPackingInfo.id,
+          PackingID: packingId,
           BoxNo: box.boxNo,
           Product: item.product,
           SourceOutlet: savedPackingInfo.outlet,
@@ -1123,26 +1131,31 @@ async function saveAllBoxes() {
           NewQty: Number(item.qty || 0),
           FinalQty: Number(item.qty || 0),
           Status: "Packed",
-          PackedBy: currentStaff.name
+          PackedBy: currentStaff.name,
+          CreatedAt: new Date()
         };
 
-        await saveToGoogleSheet("PackingDetail", detailPayload);
+        const detailResult = await saveToGoogleSheet("PackingDetail", detailPayload);
+
+        if (!detailResult.success) {
+          throw new Error("PackingDetail failed: " + detailResult.message);
+        }
       }
     }
 
-    showStatus("✅ Saved to Google Sheet and Event History!");
-    alert("✅ Saved to Google Sheet and Event History!");
+    showStatus("✅ Saved to PackingBox + PackingDetail!");
+    alert("✅ Packing saved to Google Sheet!");
 
   } catch (err) {
     console.log(err);
-    showStatus("❌ Failed to save: " + err.message);
-    alert("❌ Failed to save: " + err.message);
+    showStatus("❌ Save failed: " + err.message);
+    alert("❌ Save failed: " + err.message);
   } finally {
     saveBtn.disabled = false;
     saveBtn.innerHTML = "Save All Boxes to Google Sheet";
   }
 }
-
+  
 function exportPDF() {
   const content = `
     <html>
