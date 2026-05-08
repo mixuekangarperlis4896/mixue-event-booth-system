@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>MPOC Final System V1</title>
+  <title>MPOI - Mixue Perlis Operations Intelligence</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -256,14 +256,8 @@
 
 <div class="header">
   <h1>MPOI</h1>
-
-<p style="font-size:13px;">
-Mixue Perlis Operations Intelligence
-</p>
-
-<p style="margin-top:10px;">
-Operations • Packing • Runner • Wastage • Dashboard • AI
-</p>
+  <p style="font-size:13px;">Mixue Perlis Operations Intelligence</p>
+  <p style="margin-top:10px;">Operations • Planning • Packing • Loading • Runner • Booth • Closing • Dashboard</p>
 </div>
 
 <div class="container">
@@ -419,27 +413,70 @@ function showHome() {
       </div>
 
       <div class="notice">
-        Official Flow:
-        Planning → Packing → Loading → Runner → Booth → Closing → Dashboard
+        Official Flow: Planning → Packing → Loading → Runner → Booth → Closing → Dashboard
       </div>
     </div>
   `;
 }
-  function showPlanning() {
 
-      <div class="list-card">
-        <input type="checkbox"> Sundae Machine Checked
-      </div>
+function showPlanning() {
+  document.getElementById("app").innerHTML = `
+    ${renderTopDashboard()}
 
-      <div class="list-card">
-        <input type="checkbox"> Ice Cream Stock Loaded
-      </div>
+    <div class="box">
+      <h2>1. Event Planning</h2>
+      <p class="small">Create the event plan before packing starts. This module will later connect to the Planning tab.</p>
 
-      <div class="list-card">
-        <input type="checkbox"> QR Stand Loaded
-      </div>
+      <label>Event Date</label>
+      <input type="date" id="pDate">
 
-      <button class="btn-orange">Save Loading Checklist</button>
+      <label>Event Name</label>
+      <input type="text" id="pEventName" placeholder="Example: Unicity Booth">
+
+      <label>Booth / Location</label>
+      <input type="text" id="pLocation" placeholder="Example: UniMAP Unicity">
+
+      <label>Expected Crowd</label>
+      <input type="number" id="pCrowd" min="0" value="0">
+
+      <label>Assigned Outlet</label>
+      <select id="pOutlet">
+        ${outlets.map(o => `<option ${o === currentStaff.outlet ? "selected" : ""}>${o}</option>`).join("")}
+      </select>
+
+      <label>Planning Note</label>
+      <textarea id="pNote" placeholder="Stock estimate, sensitive products, runner notes..."></textarea>
+
+      <button class="btn-blue" onclick="savePlanningDraft()">Save Planning Draft</button>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+  document.getElementById("pDate").valueAsDate = new Date();
+}
+
+function savePlanningDraft() {
+  alert("Planning draft saved on this device. Google Sheet connection will be added in the next phase.");
+}
+
+function showLoadingChecklist() {
+  document.getElementById("app").innerHTML = `
+    ${renderTopDashboard()}
+
+    <div class="box">
+      <h2>3. Loading Checklist</h2>
+      <p class="small">Validate stock and accessories before runner leaves the outlet.</p>
+
+      <div class="list-card"><input type="checkbox"> Packed boxes checked</div>
+      <div class="list-card"><input type="checkbox"> Cups / lids / straws loaded</div>
+      <div class="list-card"><input type="checkbox"> Pearls / toppings loaded</div>
+      <div class="list-card"><input type="checkbox"> QR stand / cash float prepared</div>
+      <div class="list-card"><input type="checkbox"> Sensitive products checked</div>
+      <div class="list-card"><input type="checkbox"> Runner received handover</div>
+
+      <label>Loading Note</label>
+      <textarea placeholder="Write missing item / special instruction..."></textarea>
+
+      <button class="btn-orange" onclick="alert('Loading checklist saved on this device. Google Sheet connection will be added in the next phase.')">Save Loading Checklist</button>
       <button class="btn-grey" onclick="showHome()">Back Home</button>
     </div>
   `;
@@ -451,11 +488,12 @@ function showBoothOperation() {
 
     <div class="box">
       <h2>5. Booth Operation</h2>
+      <p class="small">Booth status, stock balance and refill request.</p>
 
       <label>Booth Name</label>
       <input type="text" placeholder="Example: Unicity Booth">
 
-      <label>Current Status</label>
+      <label>Booth Status</label>
       <select>
         <option>Preparing</option>
         <option>Operating</option>
@@ -463,13 +501,13 @@ function showBoothOperation() {
         <option>Closing</option>
       </select>
 
-      <label>Remaining Stock</label>
-      <textarea placeholder="Write current stock balance..."></textarea>
+      <label>Current Stock Balance</label>
+      <textarea placeholder="Example: Lemonade 10 left, Strawberry Bobo 5 left..."></textarea>
 
-      <label>Booth Notes</label>
+      <label>Refill / Incident Note</label>
       <textarea placeholder="Write booth situation..."></textarea>
 
-      <button class="btn-green">Update Booth Status</button>
+      <button class="btn-green" onclick="alert('Booth update saved on this device. Google Sheet connection will be added in the next phase.')">Update Booth Status</button>
       <button class="btn-grey" onclick="showHome()">Back Home</button>
     </div>
   `;
@@ -481,23 +519,27 @@ function showClosingSummary() {
 
     <div class="box">
       <h2>6. Closing Summary</h2>
+      <p class="small">End-of-event closing record before final sales analysis.</p>
 
       <label>Total Cash</label>
-      <input type="number" placeholder="0">
+      <input type="number" min="0" value="0">
 
       <label>Total QR</label>
-      <input type="number" placeholder="0">
+      <input type="number" min="0" value="0">
 
       <label>Total Sold Cups</label>
-      <input type="number" placeholder="0">
+      <input type="number" min="0" value="0">
+
+      <label>Total Leftover</label>
+      <input type="number" min="0" value="0">
 
       <label>Total Wastage</label>
-      <input type="number" placeholder="0">
+      <input type="number" min="0" value="0">
 
-      <label>Closing Notes</label>
-      <textarea placeholder="Write closing notes..."></textarea>
+      <label>Closing Note</label>
+      <textarea placeholder="Cash short, QR issue, leftover, wastage reason..."></textarea>
 
-      <button class="btn-secondary">Save Closing Summary</button>
+      <button class="btn-secondary" onclick="alert('Closing summary saved on this device. Google Sheet connection will be added in the next phase.')">Save Closing Summary</button>
       <button class="btn-grey" onclick="showHome()">Back Home</button>
     </div>
   `;
@@ -978,13 +1020,11 @@ function copyText(text, successMessage) {
   }
 }
 
+
 async function saveToGoogleSheet(tab, payload) {
   const res = await fetch(WEB_APP_URL, {
     method: "POST",
-    body: JSON.stringify({
-      tab: tab,
-      payload: payload
-    })
+    body: JSON.stringify({ tab, payload })
   });
 
   const result = await res.json();
@@ -1001,11 +1041,9 @@ async function saveAllBoxes() {
   showStatus("⏳ Saving to Google Sheet...");
 
   try {
-    const packingId = savedPackingInfo.id;
-
     const historyRecord = {
       ...savedPackingInfo,
-      version: "MPOC Final V1",
+      version: "MPOI V1",
       staffName: currentStaff.name,
       staffRole: currentStaff.role,
       totalBoxes: boxes.length,
@@ -1019,32 +1057,26 @@ async function saveAllBoxes() {
     eventHistory.unshift(historyRecord);
     saveLocalData();
 
-    // 1) Save each box summary into PackingBox tab
     for (let box of boxes) {
-      const max = getCapacity(box.boxType);
-      await saveToGoogleSheet("PackingBox", {
-        PackingID: packingId,
+      const boxPayload = {
+        PackingID: savedPackingInfo.id,
         Date: savedPackingInfo.date,
         EventName: savedPackingInfo.eventName,
         BoothName: savedPackingInfo.location,
-        BoothCategory: savedPackingInfo.outlet,
+        "Booth Category": "Event Booth",
         BoxNo: box.boxNo,
         BoxType: box.boxType,
         TotalQty: getTotalQty(box),
         PackedBy: currentStaff.name,
         CheckedBy: savedPackingInfo.checkedBy,
-        CapacityMax: max || "N/A",
-        CapacityStatus: max && getTotalQty(box) > max ? "Exceeded" : "OK",
-        GrandTotalQty: getGrandTotalQty(),
-        TotalBoxes: boxes.length,
-        TopProduct: getTopProduct(),
-        Status: "Packed"
-      });
+        Status: getCapacityWarnings().length ? "Warning" : "OK"
+      };
 
-      // 2) Save each product detail into PackingDetail tab
+      await saveToGoogleSheet("PackingBox", boxPayload);
+
       for (let item of box.items.filter(item => Number(item.qty) > 0)) {
-        await saveToGoogleSheet("PackingDetail", {
-          PackingID: packingId,
+        const detailPayload = {
+          PackingID: savedPackingInfo.id,
           BoxNo: box.boxNo,
           Product: item.product,
           SourceOutlet: savedPackingInfo.outlet,
@@ -1052,13 +1084,10 @@ async function saveAllBoxes() {
           NewQty: Number(item.qty || 0),
           FinalQty: Number(item.qty || 0),
           Status: "Packed",
-          PackedBy: currentStaff.name,
-          Date: savedPackingInfo.date,
-          EventName: savedPackingInfo.eventName,
-          BoothName: savedPackingInfo.location,
-          BoxType: box.boxType,
-          CheckedBy: savedPackingInfo.checkedBy
-        });
+          PackedBy: currentStaff.name
+        };
+
+        await saveToGoogleSheet("PackingDetail", detailPayload);
       }
     }
 
@@ -1079,7 +1108,7 @@ function exportPDF() {
   const content = `
     <html>
       <head>
-        <title>Packing Report PDF</title>
+        <title>MPOI Packing Report PDF</title>
         <style>
           body { font-family: Arial; padding: 24px; }
           h1 { color: #d60000; }
@@ -1087,7 +1116,7 @@ function exportPDF() {
         </style>
       </head>
       <body>
-        <h1>Mixue Packing Report</h1>
+        <h1>MPOI Packing Report</h1>
         <pre>${generateLabelText()}</pre>
         <h2>HQ WhatsApp Format</h2>
         <pre>${generateHQFormatText()}</pre>
