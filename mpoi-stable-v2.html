@@ -425,16 +425,13 @@ function showPlanning() {
 
     <div class="box">
       <h2>1. Event Planning</h2>
-      <p class="small">Create the event plan before packing starts. This module will later connect to the Planning tab.</p>
+      <p class="small">Create the event plan before packing starts. This will save to Google Sheet Planning tab.</p>
 
       <label>Event Date</label>
       <input type="date" id="pDate">
 
       <label>Event Name</label>
       <input type="text" id="pEventName" placeholder="Example: Unicity Booth">
-
-      <label>Booth / Location</label>
-      <input type="text" id="pLocation" placeholder="Example: UniMAP Unicity">
 
       <label>Expected Crowd</label>
       <input type="number" id="pCrowd" min="0" value="0">
@@ -444,20 +441,62 @@ function showPlanning() {
         ${outlets.map(o => `<option ${o === currentStaff.outlet ? "selected" : ""}>${o}</option>`).join("")}
       </select>
 
-      <label>Planning Note</label>
+      <label>Planner Note</label>
       <textarea id="pNote" placeholder="Stock estimate, sensitive products, runner notes..."></textarea>
 
       <button class="btn-blue" onclick="savePlanningDraft()">Save Planning Draft</button>
       <button class="btn-grey" onclick="showHome()">Back Home</button>
+
+      <div id="statusMsg"></div>
     </div>
   `;
+
   document.getElementById("pDate").valueAsDate = new Date();
 }
 
-function savePlanningDraft() {
-  alert("Planning draft saved on this device. Google Sheet connection will be added in the next phase.");
-}
+async function savePlanningDraft() {
+  const planningId = "PLAN-" + Date.now();
 
+  const payload = {
+    PlanningID: planningId,
+    Date: document.getElementById("pDate").value,
+    EventName: document.getElementById("pEventName").value.trim(),
+    ExpectedCrowd: document.getElementById("pCrowd").value,
+    AssignedOutlet: document.getElementById("pOutlet").value,
+    PlannerNote: document.getElementById("pNote").value.trim(),
+    PlannedBy: currentStaff.name,
+    Status: "Draft",
+    CreatedAt: new Date()
+  };
+
+  if (!payload.EventName) {
+    alert("Please fill Event Name.");
+    return;
+  }
+
+  const status = document.getElementById("statusMsg");
+  status.style.display = "block";
+  status.innerHTML = "⏳ Saving planning draft...";
+
+  try {
+    const result = await saveToGoogleSheet("Planning", payload);
+
+    if (result.success) {
+      status.innerHTML = "✅ Planning saved to Google Sheet!";
+      alert("✅ Planning saved!");
+      showHome();
+    } else {
+      status.innerHTML = "❌ Save failed: " + result.message;
+      alert("❌ Save failed: " + result.message);
+    }
+
+  } catch (err) {
+    console.log(err);
+    status.innerHTML = "❌ Save failed. Check console.";
+    alert("❌ Save failed. Check console.");
+  }
+}
+  
 function showLoadingChecklist() {
   document.getElementById("app").innerHTML = `
     ${renderTopDashboard()}
