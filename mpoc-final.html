@@ -1,58 +1,215 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>MPOC Final</title>
+  <title>MPOC Final System</title>
+
+  <style>
+
+    body{
+      font-family:Arial;
+      background:#f5f5f5;
+      padding:20px;
+    }
+
+    .card{
+      background:white;
+      padding:20px;
+      border-radius:15px;
+      max-width:900px;
+      margin:auto;
+      box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h1{
+      margin-bottom:20px;
+    }
+
+    input, select{
+      width:100%;
+      padding:10px;
+      margin-top:5px;
+      margin-bottom:15px;
+      border-radius:8px;
+      border:1px solid #ccc;
+    }
+
+    button{
+      padding:12px 20px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    .add-btn{
+      background:#2196F3;
+      color:white;
+    }
+
+    .save-btn{
+      background:#4CAF50;
+      color:white;
+      width:100%;
+      margin-top:20px;
+    }
+
+    .product-row{
+      border:1px solid #ddd;
+      padding:15px;
+      border-radius:10px;
+      margin-bottom:15px;
+    }
+
+  </style>
 </head>
+
 <body>
 
-<h1>MPOC Final Test</h1>
+<div class="card">
 
-<button onclick="submitPacking()">
-Save Packing
-</button>
+  <h1>MPOC Packing System</h1>
+
+  <label>Event Name</label>
+  <input type="text" id="eventName">
+
+  <label>Booth Name</label>
+  <input type="text" id="boothName">
+
+  <div id="productContainer"></div>
+
+  <button class="add-btn" onclick="addProductRow()">
+    + Add Product
+  </button>
+
+  <button class="save-btn" onclick="savePacking()">
+    Save Packing
+  </button>
+
+</div>
 
 <script>
 
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzVXhh1jizUE_t-EmmAKG7UHYi6cAIi2-pmpawmnaHJKGjatutYsIl5L5RN7xjKHTCw/exec";
 
+const products = [
+  "Strawberry Bobo",
+  "Milk Tea M",
+  "Peach Jasmine Tea",
+  "Creamy Mango Boba",
+  "Mango Brulee",
+  "Lemonade"
+];
+
+function addProductRow(){
+
+  const container = document.getElementById("productContainer");
+
+  const row = document.createElement("div");
+  row.className = "product-row";
+
+  row.innerHTML = `
+  
+    <label>Product</label>
+    <select class="product">
+      ${products.map(p => `<option>${p}</option>`).join("")}
+    </select>
+
+    <label>Existing Qty</label>
+    <input type="number" class="existingQty" value="0">
+
+    <label>New Qty</label>
+    <input type="number" class="newQty" value="0">
+
+    <label>Final Qty</label>
+    <input type="number" class="finalQty" readonly>
+
+  `;
+
+  container.appendChild(row);
+
+  const existing = row.querySelector(".existingQty");
+  const newQty = row.querySelector(".newQty");
+  const finalQty = row.querySelector(".finalQty");
+
+  function calculate(){
+    finalQty.value =
+      Number(existing.value) +
+      Number(newQty.value);
+  }
+
+  existing.addEventListener("input", calculate);
+  newQty.addEventListener("input", calculate);
+
+  calculate();
+
+}
+
 async function saveToGoogleSheet(tab, payload) {
 
   const res = await fetch(WEB_APP_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      tab: tab,
-      payload: payload
+    method:"POST",
+    body:JSON.stringify({
+      tab:tab,
+      payload:payload
     })
   });
 
-  const result = await res.json();
+  return await res.json();
 
-  if(result.success){
-    alert("Saved Successfully ✅");
-  } else {
-    alert("Save Failed ❌");
-    console.log(result);
+}
+
+async function savePacking(){
+
+  const eventName =
+    document.getElementById("eventName").value;
+
+  const boothName =
+    document.getElementById("boothName").value;
+
+  const rows =
+    document.querySelectorAll(".product-row");
+
+  for(const row of rows){
+
+    const data = {
+
+      PackingID:
+        "PK" + Date.now(),
+
+      Product:
+        row.querySelector(".product").value,
+
+      SourceOutlet:
+        boothName,
+
+      ExistingQty:
+        row.querySelector(".existingQty").value,
+
+      NewQty:
+        row.querySelector(".newQty").value,
+
+      FinalQty:
+        row.querySelector(".finalQty").value,
+
+      Status:"Packed",
+
+      PackedBy:"Boss"
+
+    };
+
+    await saveToGoogleSheet(
+      "PackingDetail",
+      data
+    );
+
   }
 
-}
-
-function submitPacking(){
-
-  const data = {
-    PackingID: "TEST001",
-    BoxNo: "BOX 1",
-    Product: "Strawberry Bobo",
-    SourceOutlet: "Kangar",
-    ExistingQty: 5,
-    NewQty: 5,
-    FinalQty: 10,
-    Status: "Packed",
-    PackedBy: "Boss"
-  };
-
-  saveToGoogleSheet("PackingDetail", data);
+  alert("Packing Saved Successfully ✅");
 
 }
+
+addProductRow();
 
 </script>
 
