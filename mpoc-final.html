@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MPOC Final</title>
+</head>
+<body>
+
+<h1>MPOC Final Test</h1>
+
+<button onclick="submitPacking()">
+Save Packing
+</button>
+
+<script>
+
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzVXhh1jizUE_t-EmmAKG7UHYi6cAIi2-pmpawmnaHJKGjatutYsIl5L5RN7xjKHTCw/exec";
+
+async function saveToGoogleSheet(tab, payload) {
+
+  const res = await fetch(WEB_APP_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      tab: tab,
+      payload: payload
+    })
+  });
+
+  const result = await res.json();
+
+  if(result.success){
+    alert("Saved Successfully ✅");
+  } else {
+    alert("Save Failed ❌");
+    console.log(result);
+  }
+
+}
+
+function submitPacking(){
+
+  const data = {
+    PackingID: "TEST001",
+    BoxNo: "BOX 1",
+    Product: "Strawberry Bobo",
+    SourceOutlet: "Kangar",
+    ExistingQty: 5,
+    NewQty: 5,
+    FinalQty: 10,
+    Status: "Packed",
+    PackedBy: "Boss"
+  };
+
+  saveToGoogleSheet("PackingDetail", data);
+
+}
+
+</script>
+
+</body>
+</html>
