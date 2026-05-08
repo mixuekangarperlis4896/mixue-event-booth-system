@@ -404,17 +404,101 @@ function showHome() {
       <button class="btn-grey" onclick="logoutStaff()">Logout</button>
     </div>
 
-    <div class="tab-bar">
-      <button class="btn-primary" onclick="showPackingForm()">Packing</button>
-      <button class="btn-blue" onclick="showHistory()">History</button>
-      <button class="btn-orange" onclick="showWastageForm()">Wastage</button>
-      <button class="btn-purple" onclick="showRunnerForm()">Runner</button>
-      <button class="btn-green" onclick="showAISuggestion()">AI Suggest</button>
-      <button class="btn-secondary" onclick="showLiveDashboard()">Dashboard</button>
-    </div>
+    <div class="box">
+      <h2>MPOI Event Flow</h2>
+      <p class="small">Official Mixue Perlis event operation flow.</p>
 
-    <div class="notice">
-      Choose a module above. Recommended flow: Packing → Save → Export PDF → Runner → Wastage.
+      <div class="tab-bar">
+        <button class="btn-blue" onclick="showPlanning()">1. Planning</button>
+        <button class="btn-primary" onclick="showPackingForm()">2. Packing</button>
+        <button class="btn-orange" onclick="showLoadingChecklist()">3. Loading</button>
+        <button class="btn-purple" onclick="showRunnerForm()">4. Runner</button>
+        <button class="btn-green" onclick="showBoothOperation()">5. Booth</button>
+        <button class="btn-secondary" onclick="showClosingSummary()">6. Closing</button>
+        <button class="btn-grey" onclick="showLiveDashboard()">7. Dashboard</button>
+      </div>
+
+      <div class="notice">
+        Official Flow:
+        Planning → Packing → Loading → Runner → Booth → Closing → Dashboard
+      </div>
+    </div>
+  `;
+}
+  function showPlanning() {
+
+      <div class="list-card">
+        <input type="checkbox"> Sundae Machine Checked
+      </div>
+
+      <div class="list-card">
+        <input type="checkbox"> Ice Cream Stock Loaded
+      </div>
+
+      <div class="list-card">
+        <input type="checkbox"> QR Stand Loaded
+      </div>
+
+      <button class="btn-orange">Save Loading Checklist</button>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+}
+
+function showBoothOperation() {
+  document.getElementById("app").innerHTML = `
+    ${renderTopDashboard()}
+
+    <div class="box">
+      <h2>5. Booth Operation</h2>
+
+      <label>Booth Name</label>
+      <input type="text" placeholder="Example: Unicity Booth">
+
+      <label>Current Status</label>
+      <select>
+        <option>Preparing</option>
+        <option>Operating</option>
+        <option>Refill Needed</option>
+        <option>Closing</option>
+      </select>
+
+      <label>Remaining Stock</label>
+      <textarea placeholder="Write current stock balance..."></textarea>
+
+      <label>Booth Notes</label>
+      <textarea placeholder="Write booth situation..."></textarea>
+
+      <button class="btn-green">Update Booth Status</button>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
+    </div>
+  `;
+}
+
+function showClosingSummary() {
+  document.getElementById("app").innerHTML = `
+    ${renderTopDashboard()}
+
+    <div class="box">
+      <h2>6. Closing Summary</h2>
+
+      <label>Total Cash</label>
+      <input type="number" placeholder="0">
+
+      <label>Total QR</label>
+      <input type="number" placeholder="0">
+
+      <label>Total Sold Cups</label>
+      <input type="number" placeholder="0">
+
+      <label>Total Wastage</label>
+      <input type="number" placeholder="0">
+
+      <label>Closing Notes</label>
+      <textarea placeholder="Write closing notes..."></textarea>
+
+      <button class="btn-secondary">Save Closing Summary</button>
+      <button class="btn-grey" onclick="showHome()">Back Home</button>
     </div>
   `;
 }
