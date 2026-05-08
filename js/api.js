@@ -66,23 +66,30 @@ function canAccessModule(role, moduleName){
     return moduleName === "home" || moduleName === "dashboard";
   }
 
-  if(r === "runner"){
-    return moduleName === "home" || moduleName === "runner";
+  const normalStaffRoles = [
+    "outletstaff",
+    "partimerstaff",
+    "outletcrew",
+    "boothcrew",
+    "runner",
+    "packingcrew"
+  ];
+
+  if(normalStaffRoles.includes(r)){
+    return (
+      moduleName === "home" ||
+      moduleName === "packing" ||
+      moduleName === "runner" ||
+      moduleName === "closing"
+    );
   }
 
-  if(r === "boothcrew"){
-    return moduleName === "home" || moduleName === "packing" || moduleName === "closing";
-  }
-
-  if(r === "outletcrew"){
-    return moduleName === "home" || moduleName === "packing" || moduleName === "closing";
-  }
-
-  if(r === "outletstaff" || r === "partimerstaff"){
-    return moduleName === "home" || moduleName === "packing" || moduleName === "closing";
-  }
-
-  return moduleName === "home" || moduleName === "packing";
+  return (
+    moduleName === "home" ||
+    moduleName === "packing" ||
+    moduleName === "runner" ||
+    moduleName === "closing"
+  );
 }
 
 function nav(){
