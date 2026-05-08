@@ -41,7 +41,9 @@ async function loadStaffMaster(){
 }
   
 function showLogin() {
-  const activeStaff = LIVE_STAFF.filter(s => s.Status === "Active");
+  const activeStaff = LIVE_STAFF.filter(s =>
+  s.Name && String(s.Status || "Active").trim() === "Active"
+);
 
   $("app").innerHTML = `
     <div class="box">
