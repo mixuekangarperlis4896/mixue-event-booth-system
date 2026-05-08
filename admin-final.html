@@ -1,0 +1,22 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MPOC Admin Final</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="css/style.css"></head><body>
+<div class="header"><h1>Admin / Boss Dashboard</h1><p>Simple overview for boss. Full control for system controller.</p></div><div class="container"><div id="app"></div></div>
+<script src="js/config.js"></script><script src="js/api.js"></script>
+<script>
+const staff=requireLogin();
+function render(){
+ $("app").innerHTML=`${nav()}<div class="dashboard">
+ <div class="dash-card"><h3>System</h3><p>Ready</p></div><div class="dash-card"><h3>Backend</h3><p>Sheet</p></div>
+ <div class="dash-card"><h3>User</h3><p style="font-size:15px">${staff.name}</p></div><div class="dash-card"><h3>Role</h3><p style="font-size:15px">${staff.role}</p></div>
+ </div><div class="box"><h2>Boss View</h2><div class="notice">
+ Boss should only see overview: sales, booth, stock sent, closing issue.<br>
+ System Controller keeps planning analytics and backend structure private.
+ </div>
+ <h3>Fast Links</h3>
+ <button class="btn-primary" onclick="location.href='packing-final.html'">Packing / Stock Sent</button>
+ <button class="btn-purple" onclick="location.href='runner-final.html'">Runner Status</button>
+ <button class="btn-green" onclick="location.href='closing-final.html'">Closing / Sales</button>
+ <div class="warning">Google Sheet is the real database. This page is the simple control panel.</div></div>`;
+}
+render();
+</script></body></html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MPOC Closing Final</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="css/style.css"></head><body>
+<div class="header"><h1>Closing Final</h1><p>Cash • QR • Leftover • Wastage • Sales Summary</p></div><div class="container"><div id="app"></div></div>
+<script src="js/config.js"></script><script src="js/api.js"></script>
+<script>
+const staff=requireLogin();
+function opt(a,s){return a.map(x=>`<option ${x===s?"selected":""}>${x}</option>`).join("")}
+function render(){
+ $("app").innerHTML=`${nav()}<div class="box"><h2>Closing Summary</h2>
+ <label>Date</label><input type="date" id="date"><label>Event Name</label><input id="eventName">
+ <label>Booth Name</label><select id="booth">${opt(MPOC.booths)}</select>
+ <div class="grid"><div><label>Total Cash</label><input type="number" id="cash" value="0"></div><div><label>Total QR</label><input type="number" id="qr" value="0"></div>
+ <div><label>Total Sold Cups</label><input type="number" id="sold" value="0"></div><div><label>Total Leftover</label><input type="number" id="leftover" value="0"></div>
+ <div><label>Total Wastage</label><input type="number" id="wastage" value="0"></div><div><label>Expected Sales RM</label><input type="number" id="expected" value="0"></div></div>
+ <label>Closing Note</label><textarea id="note" placeholder="Cash short, QR issue, leftover quality, wastage reason..."></textarea>
+ <button id="saveBtn" class="btn-green" onclick="saveClosing()">Save Closing Summary</button><div id="statusMsg"></div></div>`;setToday("date")
+}
+async function saveClosing(){
+ const cash=Number($("cash").value||0), qr=Number($("qr").value||0), expected=Number($("expected").value||0);
+ const actual=cash+qr, short=expected-actual;
+ const id="CLOSE-"+Date.now();
+ const p={ClosingID:id,Date:$("date").value,EventName:$("eventName").value.trim(),BoothName:$("booth").value,TotalCash:cash,TotalQR:qr,ActualSales:actual,ExpectedSales:expected,DuitShort:short,TotalSoldCups:Number($("sold").value||0),TotalLeftover:Number($("leftover").value||0),TotalWastage:Number($("wastage").value||0),ClosingBy:staff.name,ClosingNote:$("note").value.trim(),CreatedAt:new Date()};
+ if(!p.EventName)return alert("Fill Event Name.");
+ $("saveBtn").disabled=true;showStatus("⏳ Saving...");
+ try{
+  await saveToGoogleSheet("ClosingSummary",p);
+  await saveToGoogleSheet("SalesSummary",{SalesID:"SALE-"+Date.now(),Date:p.Date,EventName:p.EventName,BoothName:p.BoothName,Cash:cash,QR:qr,ActualSales:actual,ExpectedSales:expected,DuitShort:short,RecordedBy:staff.name,CreatedAt:new Date()});
+  showStatus(`✅ Closing saved! Actual RM${actual.toFixed(2)} | Short RM${short.toFixed(2)}`);alert("✅ Closing saved!");
+ }catch(e){showStatus("❌ "+e.message);alert("❌ "+e.message)}finally{$("saveBtn").disabled=false}
+}
+render();
+</script></body></html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MPOC Final</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="css/style.css"></head><body>
+<div class="header"><h1>MPOC Final</h1><p>Mixue Perlis Operations Control</p><p>Planning • Packing • Runner • Closing • Boss Dashboard</p></div>
+<div class="container"><div id="app"></div></div>
+<script src="js/config.js"></script><script src="js/api.js"></script>
+<script>
+function showLogin(){
+  $("app").innerHTML=`<div class="box"><h2>Staff Login</h2><p class="small">One system. Each role sees what they need.</p>
+  <label>Staff Name</label><input id="name" placeholder="Staff name">
+  <label>Outlet</label><select id="outlet">${MPOC.outlets.map(o=>`<option>${o}</option>`).join("")}</select>
+  <label>Role</label><select id="role">${Object.keys(MPOC.pins).map(r=>`<option>${r}</option>`).join("")}</select>
+  <label>PIN</label><input id="pin" type="password" placeholder="Default: 1234">
+  <button class="btn-primary" onclick="login()">Login</button>
+  <div class="notice">Final version will not disturb old V10.1 file.</div></div>`;
+}
+function login(){
+  const name=$("name").value.trim(), outlet=$("outlet").value, role=$("role").value, pin=$("pin").value.trim();
+  if(!name||!pin) return alert("Fill Staff Name and PIN.");
+  if(pin!==MPOC.pins[role]) return alert("Wrong PIN.");
+  localStorage.setItem("mixueCurrentStaff",JSON.stringify({name,outlet,role,loginTime:new Date().toLocaleString()}));
+  showHome();
+}
+function logout(){localStorage.removeItem("mixueCurrentStaff");showLogin()}
+function showHome(){
+ const staff=getStaff(); if(!staff) return showLogin();
+ $("app").innerHTML=`${nav()}
+ <div class="box"><h2>Welcome, ${staff.name}</h2><p class="small">${staff.outlet} • ${staff.role}</p><button class="btn-grey" onclick="logout()">Logout</button></div>
+ <div class="dashboard">
+  <div class="dash-card"><h3>System</h3><p>Final</p></div><div class="dash-card"><h3>Backend</h3><p>Sheet</p></div>
+  <div class="dash-card"><h3>Mode</h3><p>Live</p></div><div class="dash-card"><h3>Flow</h3><p>7</p></div>
+ </div>
+ <div class="box"><h2>MPOC Event Flow</h2>
+ <div class="nav-grid">
+  <div class="nav-card"><b>1. Planning / Packing</b><p>Create event stock, boxes and HQ WhatsApp format.</p><button class="btn-primary" onclick="location.href='packing-final.html'">Open Packing</button></div>
+  <div class="nav-card"><b>2. Runner</b><p>Runner update pickup, on route, delivered and returned.</p><button class="btn-purple" onclick="location.href='runner-final.html'">Open Runner</button></div>
+  <div class="nav-card"><b>3. Closing</b><p>Cash, QR, sold, leftover, wastage and closing summary.</p><button class="btn-green" onclick="location.href='closing-final.html'">Open Closing</button></div>
+  <div class="nav-card"><b>4. Admin / Boss</b><p>Simple overview for boss and system controller.</p><button class="btn-blue" onclick="location.href='admin-final.html'">Open Dashboard</button></div>
+ </div>
+ <div class="notice">Old system remains untouched. This is the new final system path.</div></div>`;
+}
+showHome();
+</script></body></html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MPOC Runner Final</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="css/style.css"></head><body>
+<div class="header"><h1>Runner Final</h1><p>Pickup • On Route • Delivered • Returned</p></div><div class="container"><div id="app"></div></div>
+<script src="js/config.js"></script><script src="js/api.js"></script>
+<script>
+const staff=requireLogin();
+function opt(a,s){return a.map(x=>`<option ${x===s?"selected":""}>${x}</option>`).join("")}
+function render(){
+ $("app").innerHTML=`${nav()}<div class="box"><h2>Runner Tracking</h2>
+ <label>Date</label><input type="date" id="date">
+ <label>Event Name</label><input id="eventName" placeholder="Example: Unicity 08/05">
+ <label>Runner Name</label><input id="runner" value="${staff.name}">
+ <label>Pickup Outlet</label><select id="pickup">${opt(MPOC.outlets,staff.outlet)}</select>
+ <label>Booth Name</label><select id="booth">${opt(MPOC.booths)}</select>
+ <label>Status</label><select id="status"><option>Waiting</option><option>On Route</option><option>Delivered</option><option>Returned</option><option>Refill Needed</option></select>
+ <div class="grid"><div><label>Pickup Time</label><input type="time" id="pickupTime"></div><div><label>Delivery Time</label><input type="time" id="deliveryTime"></div></div>
+ <label>Notes</label><textarea id="notes" placeholder="Box delivered, shortage, refill, booth crew received..."></textarea>
+ <button id="saveBtn" class="btn-purple" onclick="saveRunner()">Save Runner Tracking</button><div id="statusMsg"></div></div>`;setToday("date")
+}
+async function saveRunner(){
+ const p={RunnerID:"RUN-"+Date.now(),Date:$("date").value,EventName:$("eventName").value.trim(),RunnerName:$("runner").value.trim(),PickupOutlet:$("pickup").value,BoothName:$("booth").value,Status:$("status").value,PickupTime:$("pickupTime").value,DeliveryTime:$("deliveryTime").value,Notes:$("notes").value.trim()};
+ if(!p.EventName||!p.RunnerName||!p.BoothName)return alert("Fill Event, Runner and Booth.");
+ $("saveBtn").disabled=true;showStatus("⏳ Saving...");
+ try{await saveToGoogleSheet("RunnerTracking",p);showStatus("✅ Runner saved!");alert("✅ Runner saved!")}catch(e){showStatus("❌ "+e.message);alert("❌ "+e.message)}finally{$("saveBtn").disabled=false}
+}
+render();
+</script></body></html>

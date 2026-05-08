@@ -1,0 +1,77 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MPOC Packing Final</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="css/style.css"></head><body>
+<div class="header"><h1>Packing Final</h1><p>Planning • Box • Detail • HQ Format</p></div><div class="container"><div id="app"></div></div>
+<script src="js/config.js"></script><script src="js/api.js"></script>
+<script>
+const staff=requireLogin(); let boxes=[{boxNo:"Box 1",boxType:"L Cup Box",items:[{product:"Lemonade",existingQty:0,newQty:0}]}]; let info={};
+function opt(arr,sel){return arr.map(x=>`<option ${x===sel?"selected":""}>${x}</option>`).join("")}
+function cap(t){return t==="L Cup Box"?39:t==="M Cup Box"?40:t==="U Cup Sundae Box"?56:null}
+function total(box){return box.items.reduce((s,i)=>s+Number(i.existingQty||0)+Number(i.newQty||0),0)}
+function grand(){return boxes.reduce((s,b)=>s+total(b),0)}
+function warnings(){let w=[]; boxes.forEach(b=>{let m=cap(b.boxType),t=total(b); if(m&&t>m) w.push(`${b.boxNo} exceed ${b.boxType}: ${t}/${m}`)}); return w}
+function loc(){const v=$("location").value; return v==="Other Location"?$("otherLocation").value.trim():v}
+function render(){
+ $("app").innerHTML=`${nav()}<div class="dashboard">
+  <div class="dash-card"><h3>Boxes</h3><p>${boxes.length}</p></div><div class="dash-card"><h3>Cups</h3><p>${grand()}</p></div>
+  <div class="dash-card"><h3>Capacity</h3><p>${warnings().length?"Warn":"OK"}</p></div><div class="dash-card"><h3>Staff</h3><p style="font-size:15px">${staff.name}</p></div>
+ </div><div class="box"><h2>Packing Info</h2>
+ <label>Date</label><input type="date" id="date">
+ <label>Event Name</label><input id="eventName" placeholder="Example: Unicity 08/05">
+ <label>Outlet</label><select id="outlet">${opt(MPOC.outlets,staff.outlet)}</select>
+ <label>Booth / Location</label><select id="location" onchange="$('otherBox').style.display=this.value==='Other Location'?'block':'none'">${opt(MPOC.booths)}</select>
+ <div id="otherBox" style="display:none"><label>Other Location</label><input id="otherLocation"></div>
+ <label>Checked By</label><input id="checkedBy" value="${staff.name}">
+ <h2 style="margin-top:22px">Boxes</h2><p class="small">Existing = yesterday leftover. New = today added stock.</p>
+ <div id="boxesArea"></div><div id="warnArea"></div>
+ <button class="btn-secondary" onclick="addBox()">+ Add Box</button><button class="btn-primary" onclick="preview()">Generate Final Preview</button>
+ </div>`; setToday("date"); renderBoxes();
+}
+function renderBoxes(){
+ let html=""; boxes.forEach((b,bi)=>{html+=`<div class="box-card"><h3>${b.boxNo}</h3><div class="grid">
+ <div><label>Box No</label><input value="${b.boxNo}" oninput="boxes[${bi}].boxNo=this.value"></div>
+ <div><label>Box Type</label><select onchange="boxes[${bi}].boxType=this.value;renderBoxes()">${opt(MPOC.boxTypes,b.boxType)}</select></div></div>
+ ${b.items.map((it,ii)=>`<div class="item-row"><label>Product</label><select onchange="boxes[${bi}].items[${ii}].product=this.value">${opt(MPOC.products,it.product)}</select>
+ <div class="grid"><div><label>Existing Qty</label><input type="number" min="0" value="${it.existingQty}" oninput="boxes[${bi}].items[${ii}].existingQty=Number(this.value||0);renderBoxes()"></div>
+ <div><label>New Qty</label><input type="number" min="0" value="${it.newQty}" oninput="boxes[${bi}].items[${ii}].newQty=Number(this.value||0);renderBoxes()"></div></div>
+ <button class="btn-secondary" onclick="removeItem(${bi},${ii})">Remove Item</button></div>`).join("")}
+ <div class="notice">Total: ${total(b)} ${cap(b.boxType)?"/ Max "+cap(b.boxType):""}</div>
+ <button class="btn-secondary" onclick="addItem(${bi})">+ Add Item</button><button class="btn-grey" onclick="removeBox(${bi})">Remove Box</button></div>`});
+ $("boxesArea").innerHTML=html; const w=warnings(); $("warnArea").innerHTML=w.length?w.map(x=>`<div class="warning">⚠ ${x}</div>`).join(""):`<div class="ok">✅ Capacity OK</div>`;
+}
+function addBox(){boxes.push({boxNo:"Box "+(boxes.length+1),boxType:"Mixed Box",items:[{product:"Lemonade",existingQty:0,newQty:0}]});renderBoxes()}
+function removeBox(i){if(boxes.length===1)return alert("At least 1 box.");boxes.splice(i,1);renderBoxes()}
+function addItem(i){boxes[i].items.push({product:"Lemonade",existingQty:0,newQty:0});renderBoxes()}
+function removeItem(i,j){if(boxes[i].items.length===1)return alert("At least 1 item.");boxes[i].items.splice(j,1);renderBoxes()}
+function label(){
+ let t=`Packing Report\nDate: ${info.date}\nEvent: ${info.eventName}\nOutlet: ${info.outlet}\nBooth: ${info.booth}\nChecked By: ${info.checkedBy}\nTotal Boxes: ${boxes.length}\nTotal Cups: ${grand()}\n\n`;
+ boxes.forEach(b=>{t+=`${b.boxNo} / ${b.boxType}\nTotal Qty: ${total(b)}\n`;b.items.filter(i=>Number(i.existingQty)+Number(i.newQty)>0).forEach((i,k)=>{t+=`${k+1}. ${i.product} (${Number(i.existingQty||0)} + ${Number(i.newQty||0)} New) = ${Number(i.existingQty||0)+Number(i.newQty||0)}\n`});t+="\n"});return t
+}
+function hq(){
+ let t=`Order for ${info.eventName} (${info.date})\n${info.outlet}\nBooth: ${info.booth}\n\n`;
+ boxes.forEach(b=>{t+=`1 Kotak Besar - ${b.boxNo} (${b.boxType})\n`;b.items.filter(i=>Number(i.existingQty)+Number(i.newQty)>0).forEach((i,k)=>{let e=Number(i.existingQty||0),n=Number(i.newQty||0);t+=`${k+1}. ${i.product} (${e?e+" + ":""}${n} New)\n`});t+="\n"});t+=`Total Boxes: ${boxes.length}\nTotal Cups: ${grand()}`;return t
+}
+function preview(){
+ if(!$("eventName").value.trim()||!loc()||!$("checkedBy").value.trim()) return alert("Fill Event Name, Booth and Checked By.");
+ info={id:"PK-"+Date.now(),date:$("date").value,eventName:$("eventName").value.trim(),outlet:$("outlet").value,booth:loc(),checkedBy:$("checkedBy").value.trim()};
+ if(grand()<=0)return alert("Quantity cannot be 0.");
+ $("app").innerHTML=`${nav()}<div class="box"><h2>Final Preview</h2>${warnings().map(x=>`<div class="warning">⚠ ${x}</div>`).join("")||`<div class="ok">✅ Capacity OK</div>`}
+ <h3>Packing Report</h3><div class="preview">${label()}</div><h3>HQ WhatsApp Format</h3><div class="preview hq-preview">${hq()}</div>
+ <div class="action-buttons"><button id="saveBtn" class="btn-green" onclick="savePacking()">Save to Google Sheet</button>
+ <button class="btn-primary" onclick="copyText(label(),'✅ Packing copied!')">Copy Packing</button><button class="btn-blue" onclick="copyText(hq(),'✅ HQ copied!')">Copy HQ</button>
+ <button class="btn-secondary" onclick="render()">Back Edit</button><div id="statusMsg"></div></div></div>`;
+}
+async function savePacking(){
+ const btn=$("saveBtn");btn.disabled=true;btn.innerHTML="Saving...";
+ try{
+  for(const b of boxes){
+   await saveToGoogleSheet("PackingBox",{PackingID:info.id,Date:info.date,EventName:info.eventName,BoothName:info.booth,BoothCategory:"Event Booth",BoxNo:b.boxNo,BoxType:b.boxType,TotalQty:total(b),PackingStatus:"Packed",PackedBy:staff.name,Outlet:info.outlet,CreatedAt:new Date()});
+   for(const it of b.items.filter(i=>Number(i.existingQty)+Number(i.newQty)>0)){
+    const e=Number(it.existingQty||0),n=Number(it.newQty||0);
+    await saveToGoogleSheet("PackingDetail",{PackingID:info.id,BoxNo:b.boxNo,Product:it.product,SourceOutlet:info.outlet,ExistingQty:e,NewQty:n,FinalQty:e+n,Status:"Packed",PackedBy:staff.name,CreatedAt:new Date()});
+   }
+  }
+  showStatus("✅ Saved PackingBox + PackingDetail!");alert("✅ Packing saved!");
+ }catch(e){showStatus("❌ "+e.message);alert("❌ "+e.message)}finally{btn.disabled=false;btn.innerHTML="Save to Google Sheet"}
+}
+render();
+</script></body></html>
