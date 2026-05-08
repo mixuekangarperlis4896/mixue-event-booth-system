@@ -27,8 +27,21 @@ function visibleRole(staff) {
   return staff.TodayRole || staff.FixedRole || "OutletStaff";
 }
 
+  let LIVE_STAFF = [];
+
+async function loadStaffMaster(){
+  try{
+    const res = await fetch("https://script.google.com/macros/s/AKfycby0Y54F6Xvv99ASdqctlybM4foiIgQWmNZoc2PBZMtvAew4oVdYWkr1vx2LVgpAcTo/exec");
+    LIVE_STAFF = await res.json();
+    showLogin();
+  }catch(err){
+    alert("Failed to load StaffMaster");
+    console.log(err);
+  }
+}
+  
 function showLogin() {
-  const activeStaff = MPOC.staffMaster.filter(s => s.Status === "Active");
+  const activeStaff = LIVE_STAFF.filter(s => s.Status === "Active");
 
   $("app").innerHTML = `
     <div class="box">
@@ -70,7 +83,7 @@ function updateStaffPreview() {
 function login() {
   const staffId = $("staffSelect").value;
   const pin = $("pin").value.trim();
-  const staff = MPOC.staffMaster.find(s => s.StaffID === staffId);
+  const staff = LIVE_STAFF.find(s => s.StaffID === staffId);
 
   if (!staff) return alert("Please select Staff Name.");
   if (staff.Status !== "Active") return alert("This staff account is not active.");
@@ -218,7 +231,7 @@ function showHome() {
   `;
 }
 
-showHome();
+loadStaffMaster();
 </script>
 
 </body>
