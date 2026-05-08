@@ -88,9 +88,13 @@ function login() {
   const staff = LIVE_STAFF.find(s => s.StaffID === staffId);
 
   if (!staff) return alert("Please select Staff Name.");
-  if (staff.Status !== "Active") return alert("This staff account is not active.");
-  if (!pin) return alert("Please enter PIN.");
-  if (pin !== staff.PIN) return alert("Wrong PIN.");
+
+if (String(staff.Status || "").trim().toLowerCase() !== "active") {
+  return alert("This staff account is not active.");
+}
+
+if (!pin) return alert("Please enter PIN.");
+if (pin !== staff.PIN) return alert("Wrong PIN.");
 
   const loginData = {
     staffId: staff.StaffID,
